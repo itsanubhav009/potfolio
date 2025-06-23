@@ -1,6 +1,11 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled, { keyframes, css } from 'styled-components';
 import { retroGrid, neonText } from '../styles/effects/RetroEffects';
+
+const blink = keyframes`
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+`;
 
 const StyledFooter = styled.footer`
   display: flex;
@@ -76,6 +81,22 @@ const StyledCredit = styled.div`
     font-size: 10px;
     color: ${({ theme }) => theme.colors.slate};
     letter-spacing: 1px;
+    position: relative;
+  }
+  
+  .cursor {
+    display: inline-block;
+    width: 6px;
+    height: 12px;
+    background-color: ${({ theme }) => theme.colors.teal};
+    margin-left: 4px;
+    vertical-align: middle;
+    animation: ${css`${blink}`} 1.2s step-end infinite;
+  }
+  
+  .terminal-prefix {
+    color: ${({ theme }) => theme.colors.teal};
+    margin-right: 5px;
   }
 `;
 
@@ -127,7 +148,8 @@ const Footer = () => {
           </div>
           
           <div className="timestamp">
-            LOGIN: itsanubhav009 • 2025-06-23 05:32:21
+            <span className="terminal-prefix">$</span> whoami && date<br/>
+            <span className="terminal-prefix">&gt;</span> LOGIN: itsanubhav009 • 2025-06-23 06:00:11<span className="cursor"></span>
           </div>
         </a>
       </StyledCredit>

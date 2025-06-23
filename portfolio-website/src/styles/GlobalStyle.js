@@ -1,6 +1,24 @@
-import { createGlobalStyle } from 'styled-components';
+import { createGlobalStyle, keyframes, css } from 'styled-components';
 import theme from './theme';
 const { colors, fontSizes, fonts } = theme;
+
+const flicker = keyframes`
+  0%, 19.999%, 22%, 62.999%, 64%, 64.999%, 70%, 100% {
+    opacity: 0.99;
+  }
+  20%, 21.999%, 63%, 63.999%, 65%, 69.999% {
+    opacity: 0.4;
+  }
+`;
+
+const blink = keyframes`
+  0%, 49% {
+    opacity: 0;
+  }
+  50%, 100% {
+    opacity: 1;
+  }
+`;
 
 const GlobalStyle = createGlobalStyle`
   @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
@@ -51,16 +69,30 @@ const GlobalStyle = createGlobalStyle`
     color: ${colors.navy};
   }
 
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    margin: 0 0 10px 0;
+  h1, h2, h3, h4, h5, h6 {
+    margin: 0 0 20px 0;
     font-weight: 600;
     color: ${colors.lightestSlate};
     line-height: 1.1;
+    position: relative;
+  }
+  
+  /* Retro underline for headings */
+  h1:after, h2:after, h3:after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -8px;
+    width: 40px;
+    height: 3px;
+    background: linear-gradient(90deg, ${colors.teal}, ${colors.purple});
+  }
+  
+  /* Pixelated effect for section headings */
+  .section-heading:before {
+    font-family: ${fonts.retro} !important;
+    font-size: 80% !important;
+    letter-spacing: 1px;
   }
 
   p {
@@ -124,7 +156,7 @@ const GlobalStyle = createGlobalStyle`
     display: flex;
     align-items: center;
     position: relative;
-    margin: 10px 0 40px;
+    margin: 10px 0 60px;
     width: 100%;
     font-size: clamp(26px, 5vw, ${fontSizes.h3});
     white-space: nowrap;
@@ -196,6 +228,62 @@ const GlobalStyle = createGlobalStyle`
   /* Detect keyboard users and add class to body */
   body:not(.using-keyboard) *:focus {
     outline: none !important;
+  }
+  
+  /* Blinking cursor for retro text */
+  .cursor-blink {
+    display: inline-block;
+    width: 8px;
+    height: 15px;
+    background-color: ${colors.teal};
+    animation: ${css`${blink}`} 1s step-end infinite;
+    vertical-align: middle;
+  }
+  
+  /* CRT flicker for certain elements */
+  .crt-flicker {
+    animation: ${css`${flicker}`} 0.3s infinite alternate;
+  }
+  
+  /* Add grid background to certain container elements */
+  .grid-bg {
+    position: relative;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: 
+        linear-gradient(rgba(94, 234, 212, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(94, 234, 212, 0.03) 1px, transparent 1px);
+      background-size: 20px 20px;
+      pointer-events: none;
+      z-index: -1;
+    }
+  }
+  
+  /* Add a button for toggling retro effects (will add functionality in App.js) */
+  .retro-toggle {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: ${colors.lightNavy};
+    border: 1px solid ${colors.teal};
+    color: ${colors.teal};
+    font-family: ${fonts.mono};
+    font-size: 12px;
+    padding: 8px 12px;
+    border-radius: 4px;
+    z-index: 1000;
+    transition: all 0.2s ease;
+    
+    &:hover {
+      background: ${colors.teal}22;
+      transform: translateY(-2px);
+    }
   }
 `;
 

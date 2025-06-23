@@ -13,8 +13,9 @@ export const ThemeContext = createContext();
 function App() {
   const [isLoading, setIsLoading] = useState(true);
   
-  // State for theme mode (future implementation)
+  // State for theme mode and retro effects
   const [themeMode, setThemeMode] = useState('dark');
+  const [retroEffects, setRetroEffects] = useState(true);
   
   // Extend theme with mixins
   const extendedTheme = { ...theme, mixins };
@@ -23,6 +24,18 @@ function App() {
   const toggleTheme = () => {
     setThemeMode(prevMode => prevMode === 'dark' ? 'light' : 'dark');
     // We're keeping just dark theme for now, but setting up for future light theme implementation
+  };
+  
+  // Function to toggle retro effects
+  const toggleRetroEffects = () => {
+    setRetroEffects(prev => !prev);
+    
+    // Toggle body class for retro effects
+    if (retroEffects) {
+      document.body.classList.remove('retro-effects');
+    } else {
+      document.body.classList.add('retro-effects');
+    }
   };
   
   // Effect to handle system preference changes
@@ -35,13 +48,32 @@ function App() {
     
     prefersDarkMode.addEventListener('change', handleChange);
     
+    // Add retro effects class to body by default
+    document.body.classList.add('retro-effects');
+    
+    // Add keyboard detection for accessibility
+    const handleFirstTab = (e) => {
+      if (e.key === 'Tab') {
+        document.body.classList.add('using-keyboard');
+        window.removeEventListener('keydown', handleFirstTab);
+      }
+    };
+    
+    window.addEventListener('keydown', handleFirstTab);
+    
     return () => {
       prefersDarkMode.removeEventListener('change', handleChange);
+      window.removeEventListener('keydown', handleFirstTab);
     };
   }, []);
 
   return (
-    <ThemeContext.Provider value={{ themeMode, toggleTheme }}>
+    <ThemeContext.Provider value={{ 
+      themeMode, 
+      toggleTheme, 
+      retroEffects, 
+      toggleRetroEffects 
+    }}>
       <ThemeProvider theme={extendedTheme}>
         <GlobalStyle />
         {isLoading ? (
@@ -50,6 +82,13 @@ function App() {
           <>
             <RetroCursor />
             <Layout />
+            <button 
+              className="retro-toggle" 
+              onClick={toggleRetroEffects}
+              aria-label={retroEffects ? "Disable Retro Effects" : "Enable Retro Effects"}
+            >
+              {retroEffects ? "CRT: ON" : "CRT: OFF"}
+            </button>
           </>
         )}
       </ThemeProvider>

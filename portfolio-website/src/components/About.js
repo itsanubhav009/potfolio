@@ -2,6 +2,8 @@ import React from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import { useScrollReveal, variants } from '../utils/scrollReveal';
+import { RetroTerminal, RetroBadge } from './RetroUI';
+import GlitchImage from './GlitchImage';
 
 const StyledAboutSection = styled.section`
   max-width: 900px;
@@ -32,7 +34,7 @@ const StyledText = styled.div`
         content: '▹';
         position: absolute;
         left: 0;
-        color: ${({ theme }) => theme.colors.green};
+        color: ${({ theme }) => theme.colors.teal};
         font-size: ${({ theme }) => theme.fontSizes.sm};
         line-height: 12px;
       }
@@ -48,63 +50,6 @@ const StyledPic = styled.div`
     margin: 50px auto 0;
     width: 70%;
   }
-
-  .wrapper {
-    display: block;
-    position: relative;
-    width: 100%;
-    border-radius: ${({ theme }) => theme.borderRadius};
-    background-color: ${({ theme }) => theme.colors.green};
-
-    &:hover,
-    &:focus {
-      background: transparent;
-      outline: 0;
-
-      &:after {
-        top: 15px;
-        left: 15px;
-      }
-
-      .img {
-        filter: none;
-        mix-blend-mode: normal;
-      }
-    }
-
-    .img {
-      position: relative;
-      border-radius: ${({ theme }) => theme.borderRadius};
-      mix-blend-mode: multiply;
-      filter: grayscale(100%) contrast(1);
-      transition: ${({ theme }) => theme.transition};
-    }
-
-    &:before,
-    &:after {
-      content: '';
-      display: block;
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      border-radius: ${({ theme }) => theme.borderRadius};
-      transition: ${({ theme }) => theme.transition};
-    }
-
-    &:before {
-      top: 0;
-      left: 0;
-      background-color: ${({ theme }) => theme.colors.navy};
-      mix-blend-mode: screen;
-    }
-
-    &:after {
-      border: 2px solid ${({ theme }) => theme.colors.green};
-      top: 20px;
-      left: 20px;
-      z-index: -1;
-    }
-  }
 `;
 
 const StyledFlexContainer = styled.div`
@@ -117,15 +62,49 @@ const StyledFlexContainer = styled.div`
   }
 `;
 
+const SkillsContainer = styled.div`
+  margin-top: 30px;
+  
+  .skills-title {
+    font-family: ${({ theme }) => theme.fonts.mono};
+    color: ${({ theme }) => theme.colors.teal};
+    margin-bottom: 10px;
+  }
+  
+  .skills-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+`;
+
+const TerminalOutput = styled.div`
+  .command {
+    color: ${({ theme }) => theme.colors.teal};
+    margin-bottom: 5px;
+    
+    &::before {
+      content: "$ ";
+      color: ${({ theme }) => theme.colors.purple};
+    }
+  }
+  
+  .response {
+    color: ${({ theme }) => theme.colors.lightSlate};
+    margin-bottom: 15px;
+    line-height: 1.4;
+  }
+`;
+
 const skills = [
-  'JavaScript (ES6+)',
-  'TypeScript',
-  'React',
-  'Node.js',
-  'Next.js',
-  'Python',
-  'Django',
-  'GraphQL',
+  { name: 'JavaScript (ES6+)', color: 'teal' },
+  { name: 'TypeScript', color: 'teal' },
+  { name: 'React', color: 'teal' },
+  { name: 'Node.js', color: 'purple' },
+  { name: 'Next.js', color: 'purple' },
+  { name: 'Python', color: 'purple' },
+  { name: 'Django', color: 'pink' },
+  { name: 'GraphQL', color: 'pink' },
 ];
 
 const About = () => {
@@ -151,56 +130,37 @@ const About = () => {
             animate={controls}
             variants={variants}
           >
-            <p>
-              Hello! My name is Anubhav and I enjoy creating things that live on the internet. 
-              My interest in web development started back in 2012 when I decided to try editing custom Tumblr themes — turns out hacking together a custom reblog button taught me a lot about HTML & CSS!
-            </p>
+            <RetroTerminal title="about.txt">
+              <TerminalOutput>
+                <div className="command">cat about.txt</div>
+                <div className="response">
+                  Hello! My name is Anubhav and I enjoy creating things that live on the internet. 
+                  My interest in web development started back in 2012 when I decided to try editing custom Tumblr themes — turns out hacking together a custom reblog button taught me a lot about HTML & CSS!
+                </div>
+                
+                <div className="command">cat experience.txt</div>
+                <div className="response">
+                  Fast-forward to today, and I've had the privilege of working at an advertising agency, a start-up, a huge corporation, and a student-led design studio. My main focus these days is building accessible, inclusive products and digital experiences for a variety of clients.
+                </div>
+                
+                <div className="command">cat projects.txt</div>
+                <div className="response">
+                  I also recently launched a course that covers everything you need to build a web app with the Spotify API using Node & React.
+                </div>
+              </TerminalOutput>
+            </RetroTerminal>
 
-            <p>
-              Fast-forward to today, and I've had the privilege of working at an advertising agency, a start-up, a huge corporation, and a student-led design studio. My main focus these days is building accessible, inclusive products and digital experiences for a variety of clients.
-            </p>
-
-            <p>
-              I also recently launched a course that covers everything you need to build a web app with the Spotify API using Node & React.
-            </p>
-
-            <p>Here are a few technologies I've been working with recently:</p>
+            <SkillsContainer>
+              <div className="skills-title">TECH STACK //</div>
+              <div className="skills-badges">
+                {skills.map((skill, i) => (
+                  <RetroBadge key={i} color={skill.color}>
+                    {skill.name}
+                  </RetroBadge>
+                ))}
+              </div>
+            </SkillsContainer>
           </motion.div>
-
-          <motion.ul 
-            className="skills-list"
-            ref={ref}
-            initial="hidden"
-            animate={controls}
-            variants={{
-              hidden: { opacity: 0 },
-              visible: {
-                opacity: 1,
-                transition: {
-                  staggerChildren: 0.1,
-                },
-              },
-            }}
-          >
-            {skills.map((skill, i) => (
-              <motion.li 
-                key={i}
-                variants={{
-                  hidden: { opacity: 0, x: -20 },
-                  visible: {
-                    opacity: 1,
-                    x: 0,
-                    transition: {
-                      duration: 0.3,
-                      ease: "easeOut",
-                    },
-                  },
-                }}
-              >
-                {skill}
-              </motion.li>
-            ))}
-          </motion.ul>
         </StyledText>
 
         <StyledPic>
@@ -209,15 +169,12 @@ const About = () => {
             initial="hidden"
             animate={controls}
             variants={variants}
-            className="wrapper"
           >
-            {/* Replace with your image */}
-            <img
-              className="img"
+            <GlitchImage
               src="https://via.placeholder.com/300"
               alt="Headshot"
-              width={300}
-              height={300}
+              width="300px"
+              height="300px"
             />
           </motion.div>
         </StyledPic>
