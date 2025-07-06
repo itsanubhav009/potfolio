@@ -12,7 +12,7 @@ import Footer from './Footer';
 import Social from './Social';
 import RetroSection from './RetroSection';
 import CRTEffect from './CRTEffect';
-
+import TechStack from './TechStack';
 const StyledContent = styled.div`
   display: flex;
   flex-direction: column;
@@ -115,7 +115,7 @@ const Layout = () => {
         <RetroSection id="about" parallaxFactor={0.15}>
           <About />
         </RetroSection>
-
+      
         <RetroSection id="experience" parallaxFactor={0.1} hasGlow={false}>
           <Experience />
         </RetroSection>
@@ -123,12 +123,14 @@ const Layout = () => {
         <RetroSection id="projects-section" parallaxFactor={0.2}>
           <Projects />
         </RetroSection>
-
+<section id="skills" className="section">
+  <TechStack />
+</section>
         <RetroSection id="contact-section" parallaxFactor={0.05} hasScanLines={false}>
           <Contact />
         </RetroSection>
       </MainContent>
-
+        
       <Footer />
 
       <ToggleContainer>
@@ -136,6 +138,7 @@ const Layout = () => {
           CRT: {isCrtOn ? 'ON' : 'OFF'}
         </CrtToggleButton>
       </ToggleContainer>
+      
     </StyledContent>
   );
 };

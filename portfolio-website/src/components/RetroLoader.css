@@ -1,0 +1,276 @@
+.retro-loader {
+  background-color: #0a0a0a;
+  color: #64ffda; /* Portfolio teal color */
+  font-family: 'VT323', 'Courier New', monospace;
+  height: 100vh;
+  width: 100vw;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  overflow: hidden;
+}
+
+/* TV Frame styling */
+.tv-frame {
+  position: relative;
+  width: 90%;
+  max-width: 900px;
+  background-color: #222;
+  border-radius: 15px;
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.7);
+  padding: 30px;
+  overflow: hidden;
+  transform-style: preserve-3d;
+  perspective: 1000px;
+}
+
+.tv-frame::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    45deg,
+    rgba(0, 0, 0, 0.3) 0%,
+    rgba(0, 0, 0, 0) 40%,
+    rgba(0, 0, 0, 0) 60%,
+    rgba(0, 0, 0, 0.3) 100%
+  );
+  border-radius: 15px;
+  z-index: 1;
+}
+
+.tv-screen {
+  position: relative;
+  background-color: #000;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.8);
+}
+
+.tv-controls {
+  position: absolute;
+  right: 20px;
+  bottom: 5px;
+  display: flex;
+  gap: 20px;
+  z-index: 5;
+}
+
+.tv-knob {
+  width: 20px;
+  height: 20px;
+  background: linear-gradient(145deg, #333, #222);
+  border-radius: 50%;
+  border: 2px solid #444;
+}
+
+.tv-switch {
+  width: 30px;
+  height: 10px;
+  background-color: #333;
+  border-radius: 5px;
+}
+
+.terminal {
+  background-color: rgba(0, 0, 0, 0.9);
+  width: 100%;
+  height: 70vh;
+  border: 2px solid #64ffda; /* Portfolio teal color */
+  box-shadow: 0 0 20px rgba(100, 255, 218, 0.5), inset 0 0 15px rgba(0, 0, 0, 0.8);
+  border-radius: 5px;
+  padding: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 3;
+  animation: powerOn 1s ease-in-out;
+}
+
+.terminal-header {
+  background: linear-gradient(to right, #003833, #005a4f);
+  color: #eeffee;
+  padding: 8px 15px;
+  font-size: 16px;
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #64ffda; /* Portfolio teal color */
+}
+
+.terminal-content {
+  flex: 1;
+  padding: 15px;
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.4;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  text-shadow: 0 0 5px rgba(100, 255, 218, 0.7);
+  animation: textFadeIn 0.5s ease-in-out;
+}
+
+.progress-container {
+  padding: 10px 15px;
+  border-top: 1px solid #64ffda; /* Portfolio teal color */
+  background-color: #001110;
+}
+
+.progress-bar {
+  height: 10px;
+  background: linear-gradient(to right, #00ffe5, #64ffda); /* Portfolio teal color */
+  box-shadow: 0 0 8px rgba(100, 255, 218, 0.7);
+  border-radius: 5px;
+  transition: width 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.progress-bar::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg, 
+    transparent 0%, 
+    rgba(255, 255, 255, 0.4) 50%, 
+    transparent 100%
+  );
+  animation: progressGlow 1.5s infinite;
+}
+
+.progress-text {
+  text-align: center;
+  margin-top: 5px;
+  font-size: 14px;
+  text-shadow: 0 0 5px rgba(100, 255, 218, 0.7);
+}
+
+.crt-lines {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.15),
+    rgba(0, 0, 0, 0.15) 1px,
+    transparent 1px,
+    transparent 2px
+  );
+  pointer-events: none;
+  z-index: 9998;
+}
+
+.crt-flicker {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(100, 255, 218, 0.03);
+  mix-blend-mode: overlay;
+  pointer-events: none;
+  z-index: 9997;
+  animation: crtFlicker 0.15s infinite alternate;
+}
+
+.crt-vignette {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(
+    circle at center,
+    transparent 50%,
+    rgba(0, 0, 0, 0.5) 100%
+  );
+  pointer-events: none;
+  z-index: 9996;
+}
+
+/* RGB Shift effect */
+.rgb-shift {
+  position: relative;
+}
+
+.rgb-shift::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    to right,
+    rgba(255, 0, 0, 0.1),
+    rgba(0, 255, 0, 0.1),
+    rgba(0, 0, 255, 0.1)
+  );
+  mix-blend-mode: screen;
+  pointer-events: none;
+  z-index: 9995;
+  animation: rgbShift 0.2s ease-in-out;
+}
+
+.glitch {
+  animation: glitch-animation 0.3s linear;
+}
+
+.interlace::before {
+  opacity: 0.5;
+}
+
+@keyframes glitch-animation {
+  0% { transform: translate(0); opacity: 1; }
+  20% { transform: translate(-5px, 5px); opacity: 0.9; filter: hue-rotate(90deg); }
+  40% { transform: translate(-5px, -5px); opacity: 1; }
+  60% { transform: translate(5px, 5px); opacity: 0.9; filter: hue-rotate(-90deg); }
+  80% { transform: translate(5px, -5px); opacity: 1; }
+  100% { transform: translate(0); opacity: 1; }
+}
+
+@keyframes progressGlow {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@keyframes crtFlicker {
+  0% { opacity: 0.1; }
+  100% { opacity: 0.05; }
+}
+
+@keyframes powerOn {
+  0% { transform: scale(1.1); opacity: 0; filter: brightness(3); }
+  40% { transform: scale(1); opacity: 1; filter: brightness(2.5); }
+  60% { transform: scale(1.05); opacity: 1; filter: brightness(0.8); }
+  80% { transform: scale(0.98); opacity: 1; filter: brightness(1.2); }
+  100% { transform: scale(1); opacity: 1; filter: brightness(1); }
+}
+
+@keyframes textFadeIn {
+  0% { opacity: 0.3; }
+  100% { opacity: 1; }
+}
+
+@keyframes rgbShift {
+  0% { transform: translate(0, 0); opacity: 0.8; }
+  20% { transform: translate(-3px, 0); opacity: 0.9; }
+  40% { transform: translate(3px, 0); opacity: 0.8; }
+  60% { transform: translate(-2px, 0); opacity: 0.9; }
+  80% { transform: translate(2px, 0); opacity: 0.8; }
+  100% { transform: translate(0, 0); opacity: 1; }
+}

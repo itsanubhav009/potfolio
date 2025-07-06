@@ -6,6 +6,9 @@ import mixins from './styles/mixins';
 import Layout from './components/Layout';
 import RetroLoader from './components/RetroLoader';
 import RetroCursor from './components/RetroCursor';
+// Comment out unused imports for now
+// import BootLoader from './components/BootLoader';
+// import TechStack from './components/TechStack';
 
 // Create context for theme toggle
 export const ThemeContext = createContext();

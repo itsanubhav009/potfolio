@@ -1,0 +1,245 @@
+.tech-stack-container {
+  background-color: #0a0a0a;
+  color: #33ff33;
+  padding: 30px;
+  border-radius: 5px;
+  position: relative;
+  margin: 20px 0;
+  font-family: 'VT323', 'Courier New', monospace;
+}
+
+.tech-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #33ff33;
+  padding-bottom: 10px;
+}
+
+.tech-heading h2 {
+  margin: 0;
+  font-size: 28px;
+  text-shadow: 0 0 5px #33ff33;
+  letter-spacing: 2px;
+}
+
+.vhs-effect::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+    linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+  z-index: 2;
+  background-size: 100% 2px, 3px 100%;
+  pointer-events: none;
+}
+
+.vhs-effect::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.15),
+    rgba(0, 0, 0, 0.15) 1px,
+    transparent 1px,
+    transparent 2px
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+.flicker {
+  animation: vhsFlicker 0.2s linear;
+}
+
+@keyframes vhsFlicker {
+  0% { opacity: 1; }
+  25% { opacity: 0.8; filter: hue-rotate(45deg); }
+  30% { opacity: 0.9; }
+  35% { opacity: 0.7; filter: hue-rotate(-45deg); }
+  40% { opacity: 1; }
+  45% { opacity: 0.3; }
+  50% { opacity: 1; }
+  55% { opacity: 0.9; filter: hue-rotate(45deg); }
+  60% { opacity: 1; }
+  100% { opacity: 1; }
+}
+
+.tech-terminal {
+  background-color: #000;
+  border: 2px solid #33ff33;
+  border-radius: 5px;
+  overflow: hidden;
+  margin-bottom: 20px;
+  box-shadow: 0 0 15px rgba(51, 255, 51, 0.5);
+}
+
+.terminal-header {
+  background: linear-gradient(to right, #004400, #006600);
+  padding: 8px 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #33ff33;
+}
+
+.terminal-title {
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+.terminal-controls {
+  display: flex;
+  gap: 8px;
+}
+
+.control {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.minimize {
+  background-color: #ffcc00;
+}
+
+.maximize {
+  background-color: #00cc00;
+}
+
+.close {
+  background-color: #ff3333;
+}
+
+.terminal-content {
+  padding: 15px;
+  font-size: 16px;
+  line-height: 1.4;
+  min-height: 300px;
+}
+
+.ascii-skill {
+  color: #33ff33;
+  margin: 0 0 20px 0;
+  white-space: pre;
+  font-family: monospace;
+  overflow-x: auto;
+  font-size: 14px;
+  text-shadow: 0 0 5px rgba(51, 255, 51, 0.7);
+}
+
+.skill-details {
+  margin: 20px 0;
+  border-left: 2px solid #33ff33;
+  padding-left: 15px;
+}
+
+.skill-name {
+  font-size: 24px;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #ffff33;
+}
+
+.skill-description {
+  font-size: 16px;
+  color: #aaffaa;
+}
+
+.skill-nav {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.skill-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: #004400;
+  border: 1px solid #33ff33;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.skill-dot.active {
+  background-color: #33ff33;
+  box-shadow: 0 0 5px #33ff33;
+}
+
+.tech-console {
+  background-color: #000;
+  border: 1px solid #33ff33;
+  border-radius: 5px;
+  padding: 10px;
+  font-family: monospace;
+  font-size: 14px;
+  color: #33ff33;
+  margin-top: 20px;
+}
+
+.console-line {
+  margin-bottom: 5px;
+  line-height: 1.4;
+}
+
+.blink {
+  animation: blink-animation 1s steps(2, start) infinite;
+}
+
+@keyframes blink-animation {
+  to {
+    visibility: hidden;
+  }
+}
+
+.retro-button {
+  background: linear-gradient(to bottom, #0a3c2a, #003a0c);
+  border: 2px solid #00ff00;
+  border-radius: 4px;
+  color: #00ff00;
+  cursor: pointer;
+  font-family: 'VT323', 'Courier New', monospace;
+  font-size: 14px;
+  letter-spacing: 1px;
+  padding: 8px 16px;
+  position: relative;
+  text-align: center;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: all 0.2s;
+  overflow: hidden;
+}
+
+.retro-button:before {
+  content: '';
+  background: linear-gradient(to bottom, rgba(0, 255, 0, 0.2), transparent);
+  height: 50%;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+}
+
+.retro-button:hover {
+  background: linear-gradient(to bottom, #0a5c3a, #005a1c);
+  box-shadow: 0 0 10px #00ff00, 0 0 20px rgba(0, 255, 0, 0.5);
+  transform: scale(1.02);
+}
+
+.retro-button:active {
+  background: linear-gradient(to bottom, #003a0c, #0a3c2a);
+  transform: scale(0.98);
+}
