@@ -83,10 +83,9 @@ const StyledEmailLink = styled.a`
 const Social = () => {
   const socialMedia = [
     { name: 'GitHub', url: 'https://github.com/itsanubhav009', icon: <FiGithub /> },
-    { name: 'Twitter', url: 'https://twitter.com', icon: <FiTwitter /> },
-    { name: 'LinkedIn', url: 'https://linkedin.com', icon: <FiLinkedin /> },
-    { name: 'Instagram', url: 'https://instagram.com', icon: <FiInstagram /> },
-    { name: 'Codepen', url: 'https://codepen.io', icon: <FiCodepen /> },
+    { name: 'Twitter', url: 'https://x.com/anubhav64511607', icon: <FiTwitter /> },
+    { name: 'LinkedIn', url: 'https://www.linkedin.com/in/anubhavgupta007', icon: <FiLinkedin /> },
+    { name: 'Codepen', url: 'https://codepen.io/Anubhav-the-typescripter', icon: <FiCodepen /> },
   ];
 
   const containerVariants = {
@@ -139,7 +138,7 @@ const Social = () => {
           variants={containerVariants}
         >
           <StyledEmailLink
-            href="mailto:hello@example.com"
+            href="mailto:anubhav22717@gmail.com"
             variants={itemVariants}
           >
             hello@example.com
