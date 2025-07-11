@@ -1,5 +1,4 @@
-import React from 'react';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import Navbar from './Navbar';
@@ -11,8 +10,12 @@ import Contact from './Contact';
 import Footer from './Footer';
 import Social from './Social';
 import RetroSection from './RetroSection';
-import CRTEffect from './CRTEffect';
 import TechStack from './TechStack';
+import CRTEffect from './CRTEffect';
+
+// Current Date and Time: 2025-07-11 15:10:36
+// Current User's Login: itsanubhav009
+
 const StyledContent = styled.div`
   display: flex;
   flex-direction: column;
@@ -81,21 +84,25 @@ const CrtToggleButton = styled.button`
   border-radius: var(--border-radius);
   cursor: pointer;
   transition: var(--transition);
+  box-shadow: 0 0 10px rgba(100, 255, 218, 0.2);
 
   &:hover,
   &:focus {
     background-color: var(--green-tint);
     color: var(--navy);
+    box-shadow: 0 0 15px rgba(100, 255, 218, 0.4);
   }
 `;
 
 const Layout = () => {
-  const [isCrtOn, setIsCrtOn] = useState(true);
+  // CRT effects are off by default
+  const [isCrtOn, setIsCrtOn] = useState(false);
 
   const toggleCrt = () => setIsCrtOn(prev => !prev);
 
   return (
     <StyledContent>
+      {/* Conditionally render CRT effects */}
       {isCrtOn && (
         <>
           <CRTEffect />
@@ -123,9 +130,11 @@ const Layout = () => {
         <RetroSection id="projects-section" parallaxFactor={0.2}>
           <Projects />
         </RetroSection>
-<section id="skills" className="section">
-  <TechStack />
-</section>
+        
+        <section id="skills" className="section">
+          <TechStack />
+        </section>
+        
         <RetroSection id="contact-section" parallaxFactor={0.05} hasScanLines={false}>
           <Contact />
         </RetroSection>
@@ -133,6 +142,7 @@ const Layout = () => {
         
       <Footer />
 
+      {/* CRT effects toggle button */}
       <ToggleContainer>
         <CrtToggleButton onClick={toggleCrt}>
           CRT: {isCrtOn ? 'ON' : 'OFF'}

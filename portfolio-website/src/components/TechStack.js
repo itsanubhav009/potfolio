@@ -32,49 +32,255 @@ const starTwinkle = keyframes`
   50% { opacity: 1; }
 `;
 
-const spaceshipFloat = keyframes`
-  0%, 100% { transform: translateY(0) rotate(-5deg); }
-  50% { transform: translateY(-20px) rotate(-3deg); }
+const glitch = keyframes`
+  0% {
+    transform: translate(0);
+    text-shadow: -2px 0 #ff00c1, 2px 0 #00ff9f;
+  }
+  2% {
+    transform: translate(-2px, 2px);
+    text-shadow: 2px -2px #ff00c1, -2px 2px #00ff9f;
+  }
+  4% {
+    transform: translate(-1px, -1px);
+    text-shadow: 1px 1px #ff00c1, -1px -1px #00ff9f;
+  }
+  6% {
+    transform: translate(1px, -2px);
+    text-shadow: -1px 0 #ff00c1, 1px 0 #00ff9f;
+  }
+  8% {
+    transform: translate(0);
+    text-shadow: -2px 0 #ff00c1, 2px 0 #00ff9f;
+  }
+  10% {
+    transform: translate(-2px, 2px);
+    text-shadow: 2px -2px #ff00c1, -2px 2px #00ff9f;
+  }
+  12% {
+    transform: translate(0);
+    text-shadow: none;
+  }
+  100% {
+    transform: translate(0);
+    text-shadow: none;
+  }
 `;
 
-const glow = keyframes`
-  0%, 100% { filter: drop-shadow(0 0 5px rgba(0, 255, 255, 0.7)); }
-  50% { filter: drop-shadow(0 0 15px rgba(0, 255, 255, 1)); }
+const scanline = keyframes`
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100%);
+  }
 `;
 
-const scanLine = keyframes`
-  0% { transform: translateY(-100%); }
-  100% { transform: translateY(100%); }
+const blink = keyframes`
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
 `;
 
-const pulse = keyframes`
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.05); }
+const flicker = keyframes`
+  0%, 100% { opacity: 1; }
+  8%, 10% { opacity: 0.8; }
+  20%, 25% { opacity: 0.95; }
+  28%, 33% { opacity: 0.85; }
+  40%, 45% { opacity: 0.9; }
+  48%, 50% { opacity: 0.7; }
+  53%, 55% { opacity: 0.85; }
 `;
 
-const rotateIn = keyframes`
-  from { transform: rotateY(90deg); opacity: 0; }
-  to { transform: rotateY(0); opacity: 1; }
+const neonPulse = keyframes`
+  0%, 100% {
+    text-shadow: 
+      0 0 5px rgba(0, 180, 180, 0.8),
+      0 0 10px rgba(0, 180, 180, 0.5),
+      0 0 15px rgba(0, 180, 180, 0.3),
+      0 0 20px rgba(0, 180, 180, 0.2);
+  }
+  50% {
+    text-shadow: 
+      0 0 5px rgba(0, 180, 180, 0.5),
+      0 0 10px rgba(0, 180, 180, 0.3),
+      0 0 15px rgba(0, 180, 180, 0.2),
+      0 0 20px rgba(0, 180, 180, 0.1);
+  }
 `;
 
-const engineGlow = keyframes`
-  0%, 100% { opacity: 0.7; box-shadow: 0 0 15px 5px rgba(0, 255, 255, 0.7); }
-  50% { opacity: 1; box-shadow: 0 0 25px 8px rgba(0, 255, 255, 1); }
+const pixelShake = keyframes`
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  25% { transform: translate(1px, 1px) rotate(0.5deg); }
+  50% { transform: translate(-1px, -1px) rotate(-0.5deg); }
+  75% { transform: translate(1px, -1px) rotate(0.5deg); }
 `;
 
-const radarScan = keyframes`
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+const glitchAnim = keyframes`
+  0% {
+    clip-path: inset(80% 0 0 0);
+    transform: translate(-2px, -2px);
+  }
+  10% {
+    clip-path: inset(10% 0 85% 0);
+    transform: translate(2px, 2px);
+  }
+  20% {
+    clip-path: inset(80% 0 0 0);
+    transform: translate(-2px, 2px);
+  }
+  30% {
+    clip-path: inset(10% 0 85% 0);
+    transform: translate(2px, -2px);
+  }
+  40% {
+    clip-path: inset(50% 0 30% 0);
+    transform: translate(-2px, -2px);
+  }
+  50% {
+    clip-path: inset(10% 0 85% 0);
+    transform: translate(2px, 2px);
+  }
+  60% {
+    clip-path: inset(80% 0 0 0);
+    transform: translate(-2px, 2px);
+  }
+  70% {
+    clip-path: inset(10% 0 85% 0);
+    transform: translate(2px, -2px);
+  }
+  80% {
+    clip-path: inset(50% 0 30% 0);
+    transform: translate(-2px, -2px);
+  }
+  90% {
+    clip-path: inset(10% 0 85% 0);
+    transform: translate(2px, 2px);
+  }
+  100% {
+    clip-path: inset(80% 0 0 0);
+    transform: translate(0);
+  }
 `;
 
-// Space background container
-const SpaceContainer = styled.div`
+const crtOnOff = keyframes`
+  0% {
+    transform: scale(1, 0.8) translate(0, 0);
+    filter: brightness(30);
+    opacity: 0;
+  }
+  3% {
+    transform: scale(1, 0.8) translate(0, 0);
+    filter: brightness(30);
+    opacity: 1;
+  }
+  8% {
+    transform: scale(1, 1.2) translate(0, -10px);
+    filter: brightness(10);
+  }
+  13% {
+    transform: scale(1, 1) translate(0, 0);
+    filter: contrast(1) brightness(1.5);
+  }
+  100% {
+    transform: scale(1) translate(0, 0);
+    filter: contrast(1) brightness(1);
+  }
+`;
+
+const retroFadeIn = keyframes`
+  0% {
+    opacity: 0;
+    transform: translateY(10px) scale(0.9);
+    filter: brightness(1.2) blur(2px);
+  }
+  10% {
+    opacity: 0.3;
+    filter: brightness(1.5) blur(1px);
+  }
+  30% {
+    opacity: 0.5;
+    filter: brightness(1.3) blur(0.5px);
+  }
+  50% {
+    filter: brightness(1.1) blur(0);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: brightness(1) blur(0);
+  }
+`;
+
+const scanInterlace = keyframes`
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 0 100%;
+  }
+`;
+
+const borderGlow = keyframes`
+  0%, 100% {
+    box-shadow: 
+      0 0 5px rgba(0, 180, 180, 0.3),
+      0 0 10px rgba(0, 180, 180, 0.2),
+      inset 0 0 5px rgba(0, 180, 180, 0.2);
+  }
+  50% {
+    box-shadow: 
+      0 0 8px rgba(0, 180, 180, 0.5),
+      0 0 15px rgba(0, 180, 180, 0.3),
+      inset 0 0 8px rgba(0, 180, 180, 0.3);
+  }
+`;
+
+// Space background container with CRT effect - DARKER
+const CRTContainer = styled.div`
   position: relative;
   min-height: 100vh;
   width: 100%;
   overflow: hidden;
-  background-color: #000005;
+  background: linear-gradient(135deg, #030810 0%, #050f20 50%, #030810 100%);
   padding: 40px 20px;
+  animation: ${crtOnOff} 2s ease-in-out;
+  
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(
+      0deg,
+      rgba(0, 0, 0, 0.15),
+      rgba(0, 0, 0, 0.15) 1px,
+      transparent 1px,
+      transparent 2px
+    );
+    pointer-events: none;
+    z-index: 20;
+    opacity: 0.7;
+    animation: ${scanInterlace} 10s linear infinite;
+  }
+
+  /* CRT edge effect */
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(
+      ellipse at center,
+      transparent 70%,
+      rgba(0, 0, 0, 0.8) 150%
+    );
+    pointer-events: none;
+    z-index: 21;
+  }
 `;
 
 // Star field background
@@ -123,7 +329,6 @@ const StarField = styled.div`
       radial-gradient(1px 1px at 72% 48%, white 1px, transparent 0),
       radial-gradient(1px 1px at 88% 82%, white 1px, transparent 0),
       radial-gradient(1px 1px at 93% 16%, white 1px, transparent 0);
-    background-size: 300% 300%;
     animation: ${starTwinkle} 3s ease-in-out infinite alternate;
   }
   
@@ -147,42 +352,43 @@ const StarField = styled.div`
       radial-gradient(2px 2px at 65% 42%, rgba(200, 255, 255, 1) 1px, transparent 0),
       radial-gradient(2px 2px at 25% 25%, rgba(200, 255, 255, 1) 1px, transparent 0),
       radial-gradient(2px 2px at 75% 95%, rgba(200, 255, 255, 1) 1px, transparent 0);
-    background-size: 300% 300%;
-    filter: drop-shadow(0 0 2px rgba(100, 255, 255, 0.8));
+    filter: drop-shadow(0 0 2px rgba(100, 200, 255, 0.4));
     animation: ${starTwinkle} 5s ease-in-out infinite;
   }
 `;
 
-// Nebula background
-const SpaceNebula = styled.div`
+// Nebula background with retro colors - DARKER
+const RetroNebula = styled.div`
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 1;
+  z-index: 0;
   background: 
     radial-gradient(
-      ellipse at 30% 40%,
-      rgba(90, 0, 120, 0.15) 0%,
+      ellipse at 20% 30%,
+      rgba(80, 0, 120, 0.08) 0%,
       transparent 60%
     ),
     radial-gradient(
-      ellipse at 70% 60%,
-      rgba(0, 50, 100, 0.1) 0%,
+      ellipse at 80% 40%,
+      rgba(0, 100, 150, 0.07) 0%,
       transparent 60%
     ),
     radial-gradient(
-      ellipse at 50% 30%,
-      rgba(0, 100, 150, 0.08) 0%,
-      transparent 70%
+      ellipse at 50% 60%,
+      rgba(120, 0, 120, 0.04) 0%,
+      transparent 60%
     ),
     radial-gradient(
-      ellipse at 80% 20%,
-      rgba(120, 0, 50, 0.05) 0%,
-      transparent 50%
+      ellipse at 30% 70%,
+      rgba(0, 100, 80, 0.05) 0%,
+      transparent 60%
     );
   pointer-events: none;
+  opacity: 0.5;
+  animation: ${flicker} 5s infinite;
 `;
 
 // Content container 
@@ -191,467 +397,420 @@ const ContentContainer = styled.div`
   z-index: 10;
   max-width: 1200px;
   margin: 0 auto;
-  padding-top: 20px;
+  padding-top: 30px;
 `;
 
-// Spaceship container
-const SpaceshipContainer = styled.div`
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  animation: ${spaceshipFloat} 8s ease-in-out infinite;
-`;
-
-// Alien Spaceship
-const Spaceship = styled.div`
+// Retro Terminal Dashboard - DARKER
+const RetroTerminal = styled.div`
   position: relative;
   width: 90%;
-  max-width: 900px;
-  min-height: 500px;
-  margin: 40px auto;
-  background: linear-gradient(135deg, rgba(20, 30, 50, 0.9), rgba(10, 15, 25, 0.95));
-  border-radius: 30px 120px 30px 30px;
-  border: 2px solid rgba(0, 255, 255, 0.7);
-  box-shadow: 0 0 30px rgba(0, 255, 255, 0.5), inset 0 0 30px rgba(0, 255, 255, 0.2);
-  padding: 30px;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 25px;
+  background: rgba(5, 10, 20, 0.75);
+  border-radius: 8px;
+  border: 2px solid rgba(0, 150, 150, 0.4);
+  box-shadow: 0 0 15px rgba(0, 150, 150, 0.2), inset 0 0 10px rgba(0, 0, 0, 0.7);
+  animation: ${borderGlow} 3s infinite, ${retroFadeIn} 1s ease-out;
   overflow: hidden;
+  backdrop-filter: blur(5px);
   
-  &::before {
-    content: '';
-    position: absolute;
-    top: -15px;
-    left: 15%;
-    width: 70%;
-    height: 30px;
-    background: rgba(20, 30, 50, 0.9);
-    border: 2px solid rgba(0, 255, 255, 0.7);
-    border-bottom: none;
-    border-radius: 15px 15px 0 0;
-    box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
-  }
-  
+  /* Scanline animation */
   &::after {
-    content: '';
-    position: absolute;
-    bottom: -5px;
-    left: 10%;
-    width: 80%;
-    height: 10px;
-    background: rgba(0, 255, 255, 0.8);
-    border-radius: 0 0 10px 10px;
-    filter: blur(5px);
-    animation: ${glow} 2s ease-in-out infinite;
-  }
-`;
-
-// Spaceship cockpit window
-const SpaceshipWindow = styled.div`
-  position: absolute;
-  top: -50px;
-  right: 100px;
-  width: 100px;
-  height: 100px;
-  background: rgba(0, 255, 255, 0.2);
-  border: 3px solid rgba(0, 255, 255, 0.7);
-  border-radius: 50%;
-  box-shadow: 0 0 15px rgba(0, 255, 255, 0.5), inset 0 0 20px rgba(0, 255, 255, 0.3);
-  
-  &::after {
-    content: '';
-    position: absolute;
-    top: 15px;
-    left: 15px;
-    width: 20px;
-    height: 20px;
-    background: rgba(255, 255, 255, 0.9);
-    border-radius: 50%;
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
-  }
-`;
-
-// Engine glow
-const EngineGlow = styled.div`
-  position: absolute;
-  bottom: -15px;
-  left: 10%;
-  width: 40px;
-  height: 20px;
-  background: rgba(0, 255, 255, 0.8);
-  border-radius: 50%;
-  animation: ${engineGlow} 1.5s ease-in-out infinite;
-  
-  &::before {
-    content: '';
-    position: absolute;
-    left: 60px;
-    width: 30px;
-    height: 15px;
-    background: rgba(0, 255, 255, 0.8);
-    border-radius: 50%;
-    animation: ${engineGlow} 1.8s ease-in-out infinite;
-  }
-  
-  &::after {
-    content: '';
-    position: absolute;
-    left: 120px;
-    width: 35px;
-    height: 18px;
-    background: rgba(0, 255, 255, 0.8);
-    border-radius: 50%;
-    animation: ${engineGlow} 1.2s ease-in-out infinite;
-  }
-`;
-
-// Radar antenna
-const Antenna = styled.div`
-  position: absolute;
-  top: -35px;
-  left: 20%;
-  width: 4px;
-  height: 40px;
-  background: rgba(150, 150, 150, 0.8);
-  
-  &::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -8px;
-    width: 20px;
-    height: 20px;
-    border: 2px solid rgba(0, 255, 255, 0.7);
-    border-radius: 50%;
-    box-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
-    
-    &::before {
-      content: '';
-      position: absolute;
-      top: 5px;
-      left: 5px;
-      width: 10px;
-      height: 10px;
-      background: rgba(0, 255, 255, 0.6);
-      border-radius: 50%;
-    }
-  }
-`;
-
-// Radar dish
-const RadarDish = styled.div`
-  position: absolute;
-  top: -40px;
-  left: 40%;
-  width: 30px;
-  height: 30px;
-  background: rgba(50, 50, 70, 0.9);
-  border: 2px solid rgba(100, 100, 120, 0.8);
-  border-radius: 50%;
-  
-  &::before {
-    content: '';
-    position: absolute;
-    top: 5px;
-    left: 5px;
-    width: 20px;
-    height: 20px;
-    border-left: 2px solid rgba(0, 255, 255, 0.8);
-    border-bottom: 2px solid rgba(0, 255, 255, 0.8);
-    border-radius: 50%;
-    animation: ${radarScan} 4s linear infinite;
-  }
-`;
-
-// Main screen
-const ScreenContainer = styled.div`
-  position: relative;
-  width: 100%;
-  min-height: 400px;
-  margin-top: 20px;
-  background: rgba(0, 20, 40, 0.7);
-  border: 2px solid rgba(0, 255, 255, 0.7);
-  border-radius: 15px;
-  padding: 20px;
-  overflow: hidden;
-  box-shadow: inset 0 0 20px rgba(0, 255, 255, 0.2);
-  
-  &::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
-    height: 2px;
-    background: linear-gradient(
-      to right,
-      rgba(0, 255, 255, 0),
-      rgba(0, 255, 255, 0.8),
-      rgba(0, 255, 255, 0)
-    );
-    animation: ${scanLine} 6s linear infinite;
-    z-index: 5;
+    height: 5px;
+    background: rgba(0, 180, 180, 0.3);
+    box-shadow: 0 0 10px rgba(0, 180, 180, 0.3);
+    animation: ${scanline} 4s linear infinite;
+    z-index: 2;
+    opacity: 0.5;
   }
 `;
 
-// Screen content
-const ScreenContent = styled.div`
-  position: relative;
-  z-index: 1;
-`;
-
-// Control panel
-const ControlPanel = styled.div`
+// Retro Header with glitch effect
+const RetroHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 20px;
-  background: rgba(10, 25, 47, 0.8);
-  border: 2px solid rgba(0, 255, 255, 0.7);
-  border-radius: 10px;
-  margin-bottom: 20px;
-  box-shadow: 0 0 15px rgba(0, 255, 255, 0.2), inset 0 0 10px rgba(0, 255, 255, 0.1);
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid rgba(0, 150, 150, 0.2);
+  position: relative;
   
-  .panel-title {
+  /* Glitch effect container */
+  .header-title-container {
+    position: relative;
+  }
+  
+  /* Main text */
+  .header-title {
     font-family: 'VT323', 'Courier New', monospace;
-    color: rgba(0, 255, 255, 1);
-    font-size: 22px;
+    font-size: 38px;
+    font-weight: 600;
+    color: rgba(0, 180, 180, 0.9);
     letter-spacing: 2px;
-    text-shadow: 0 0 5px rgba(0, 255, 255, 0.8);
+    text-transform: uppercase;
+    position: relative;
+    animation: ${pixelShake} 3s infinite, ${neonPulse} 2s infinite;
+    
+    &::before {
+      content: "TECH SKILLS DATABASE";
+      position: absolute;
+      left: 0;
+      top: 0;
+      color: rgba(180, 0, 180, 0.5);
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      animation: ${glitchAnim} 4s infinite;
+      z-index: 1;
+      text-shadow: 2px 0 #007777;
+      clip-path: inset(50% 0 50% 0);
+      transform: translateX(-2px);
+    }
+    
+    &::after {
+      content: "TECH SKILLS DATABASE";
+      position: absolute;
+      left: 0;
+      top: 0;
+      color: rgba(0, 180, 180, 0.5);
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      animation: ${glitchAnim} 3.5s infinite reverse;
+      z-index: 1;
+      text-shadow: -2px 0 #770077;
+      clip-path: inset(30% 0 60% 0);
+      transform: translateX(2px);
+    }
   }
   
-  .control-lights {
+  .header-meta {
+    font-family: 'VT323', 'Courier New', monospace;
+    font-size: 16px;
+    color: rgba(0, 180, 180, 0.7);
     display: flex;
-    gap: 10px;
-  }
-  
-  .control-light {
-    width: 15px;
-    height: 15px;
-    border-radius: 50%;
-    border: 1px solid rgba(255, 255, 255, 0.5);
+    align-items: center;
+    text-shadow: 0 0 5px rgba(0, 180, 180, 0.3);
+    animation: ${blink} 2s infinite;
     
-    &.green {
-      background: rgba(0, 255, 0, 0.7);
-      box-shadow: 0 0 5px rgba(0, 255, 0, 0.8);
+    .user-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 4px;
+      background: rgba(0, 150, 150, 0.15);
+      border: 1px solid rgba(0, 150, 150, 0.4);
+      margin-right: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      color: rgba(0, 180, 180, 0.8);
+      text-shadow: 0 0 5px rgba(0, 180, 180, 0.4);
+      animation: ${pixelShake} 2s infinite;
     }
     
-    &.yellow {
-      background: rgba(255, 255, 0, 0.7);
-      box-shadow: 0 0 5px rgba(255, 255, 0, 0.8);
-    }
-    
-    &.red {
-      background: rgba(255, 0, 0, 0.7);
-      box-shadow: 0 0 5px rgba(255, 0, 0, 0.8);
+    .time-dot {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: rgba(0, 180, 180, 0.6);
+      margin: 0 10px;
+      box-shadow: 0 0 5px rgba(0, 180, 180, 0.4);
+      animation: ${blink} 1s infinite;
     }
   }
 `;
 
-// Filter buttons panel
-const FilterPanel = styled.div`
+// Retro Filter Section - DARKER
+const RetroFilterSection = styled.div`
   display: flex;
   flex-wrap: wrap;
-  gap: 15px;
-  justify-content: center;
+  gap: 10px;
+  margin-bottom: 25px;
   padding: 15px;
-  background: rgba(10, 25, 47, 0.7);
-  border: 2px solid rgba(0, 255, 255, 0.7);
-  border-radius: 10px;
-  margin-bottom: 20px;
-  box-shadow: inset 0 0 15px rgba(0, 255, 255, 0.2);
+  background: rgba(0, 15, 30, 0.5);
+  border: 1px solid rgba(0, 150, 150, 0.2);
+  border-radius: 4px;
+  position: relative;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.6);
+  
+  /* Terminal header */
+  &::before {
+    content: " FILTER SELECTION ";
+    position: absolute;
+    top: -10px;
+    left: 15px;
+    background: rgba(5, 10, 20, 0.9);
+    padding: 0 10px;
+    font-family: 'VT323', 'Courier New', monospace;
+    font-size: 14px;
+    color: rgba(0, 180, 180, 0.8);
+    text-shadow: 0 0 5px rgba(0, 180, 180, 0.3);
+  }
 `;
 
-// Filter button
-const FilterButton = styled.button`
-  background: ${props => props.active ? 'rgba(0, 255, 255, 0.3)' : 'rgba(10, 25, 47, 0.7)'};
-  border: 2px solid ${props => props.active ? 'rgba(0, 255, 255, 1)' : 'rgba(0, 255, 255, 0.5)'};
-  color: ${props => props.active ? '#ffffff' : 'rgba(0, 255, 255, 0.8)'};
-  padding: 8px 15px;
-  border-radius: 5px;
+// Retro Filter Button - DARKER
+const RetroFilterButton = styled.button`
+  background: ${props => props.active 
+    ? 'rgba(0, 150, 150, 0.15)' 
+    : 'rgba(0, 25, 40, 0.5)'};
+  border: 1px solid ${props => props.active 
+    ? 'rgba(0, 180, 180, 0.6)' 
+    : 'rgba(0, 150, 150, 0.2)'};
+  color: ${props => props.active 
+    ? 'rgba(0, 180, 180, 0.9)' 
+    : 'rgba(0, 150, 150, 0.6)'};
+  padding: 8px 16px;
   font-family: 'VT323', 'Courier New', monospace;
   font-size: 16px;
   cursor: pointer;
-  transition: all 0.3s;
-  position: relative;
-  overflow: hidden;
-  text-shadow: ${props => props.active ? '0 0 5px rgba(0, 255, 255, 0.8)' : 'none'};
-  box-shadow: ${props => props.active ? '0 0 10px rgba(0, 255, 255, 0.5)' : 'none'};
-  animation: ${props => props.active ? css`${pulse} 2s infinite` : 'none'};
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: ${props => props.active 
+    ? '0 0 10px rgba(0, 150, 150, 0.2)' 
+    : 'none'};
+  text-shadow: ${props => props.active 
+    ? '0 0 5px rgba(0, 150, 150, 0.5)' 
+    : 'none'};
   
   &:hover {
-    background: rgba(0, 255, 255, 0.2);
+    background: rgba(0, 150, 150, 0.12);
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0, 255, 255, 0.3);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2), 0 0 10px rgba(0, 150, 150, 0.2);
+  }
+  
+  /* Retro button style */
+  &::after {
+    content: ${props => props.active ? '"[ACTIVE]"' : '""'};
+    margin-left: 6px;
+    font-size: 12px;
+    color: ${props => props.active ? 'rgba(180, 180, 50, 0.8)' : 'transparent'};
+    animation: ${blink} 1s infinite;
+  }
+`;
+
+// Retro Skills Grid
+const RetroSkillsGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+  margin-top: 10px;
+  position: relative;
+  
+  /* Terminal-like corner decorations */
+  &::before, &::after {
+    content: "";
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border: 1px solid rgba(0, 150, 150, 0.3);
+    z-index: 5;
   }
   
   &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(
-      90deg,
-      transparent,
-      rgba(0, 255, 255, 0.2),
-      transparent
-    );
-    transition: left 0.5s;
+    top: -5px;
+    left: -5px;
+    border-right: none;
+    border-bottom: none;
   }
   
-  &:hover::before {
-    left: 100%;
+  &::after {
+    top: -5px;
+    right: -5px;
+    border-left: none;
+    border-bottom: none;
   }
 `;
 
-// Skills grid
-const SkillGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
-  gap: 20px;
-  margin-top: 20px;
-`;
-
-// Skill card
-const SkillCard = styled.div`
-  background: rgba(10, 25, 47, 0.7);
-  border: 2px solid rgba(0, 255, 255, 0.7);
-  border-radius: 8px;
-  padding: 15px;
+// Retro Skill Card - DARKER
+const RetroSkillCard = styled.div`
+  background: rgba(0, 10, 20, 0.7);
+  border: 1px solid rgba(0, 150, 150, 0.3);
+  padding: 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  transition: all 0.3s;
-  box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
+  transition: all 0.3s ease;
   position: relative;
-  overflow: hidden;
-  animation: ${css`${rotateIn} 0.5s ease-out forwards`};
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+  animation: ${retroFadeIn} 0.8s ease-out forwards;
   animation-delay: ${props => props.index * 0.1}s;
   opacity: 0;
   
+  /* Scanline effect */
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(
+      0deg,
+      rgba(0, 0, 0, 0.1),
+      rgba(0, 0, 0, 0.1) 1px,
+      transparent 1px,
+      transparent 2px
+    );
+    pointer-events: none;
+    opacity: 0.3;
+    z-index: 1;
+  }
+  
   &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 5px 15px rgba(0, 255, 255, 0.4);
-    border-color: rgba(0, 255, 255, 1);
+    transform: translateY(-5px) scale(1.02);
+    border-color: rgba(0, 180, 180, 0.6);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3), 0 0 10px rgba(0, 150, 150, 0.3), inset 0 0 15px rgba(0, 0, 0, 0.5);
+    
+    .skill-logo {
+      filter: drop-shadow(0 0 5px rgba(0, 150, 150, 0.5));
+      animation: ${pixelShake} 2s infinite;
+    }
+    
+    .skill-name {
+      color: rgba(0, 180, 180, 0.8);
+      text-shadow: 0 0 5px rgba(0, 180, 180, 0.5);
+    }
+    
+    .skill-level {
+      color: rgba(180, 180, 50, 0.8);
+    }
+    
+    .skill-progress {
+      box-shadow: 0 0 10px rgba(0, 150, 150, 0.3);
+    }
   }
   
   .skill-logo {
+    position: relative;
+    z-index: 2;
     width: 50px;
     height: 50px;
-    margin-bottom: 10px;
-    filter: drop-shadow(0 0 3px rgba(0, 255, 255, 0.5));
+    margin-bottom: 15px;
+    filter: drop-shadow(0 0 3px rgba(0, 150, 150, 0.2));
+    transition: all 0.3s ease;
+    opacity: 0.9;
   }
   
   .skill-name {
+    position: relative;
+    z-index: 2;
     font-family: 'VT323', 'Courier New', monospace;
-    color: white;
-    font-size: 16px;
-    margin-bottom: 5px;
+    color: rgba(0, 180, 180, 0.7);
+    font-size: 18px;
+    margin-bottom: 8px;
     text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-shadow: 0 0 3px rgba(0, 180, 180, 0.2);
   }
   
   .skill-level {
+    position: relative;
+    z-index: 2;
     font-family: 'VT323', 'Courier New', monospace;
-    color: rgba(0, 255, 255, 1);
-    font-size: 14px;
-    margin-bottom: 10px;
+    color: rgba(180, 180, 50, 0.7);
+    font-size: 16px;
+    margin-bottom: 15px;
+    text-shadow: 0 0 3px rgba(180, 180, 50, 0.2);
   }
   
   .skill-bar {
+    position: relative;
+    z-index: 2;
     width: 100%;
     height: 8px;
-    background: rgba(10, 25, 47, 0.5);
-    border: 1px solid rgba(0, 255, 255, 0.3);
-    border-radius: 4px;
+    background: rgba(0, 25, 40, 0.5);
     overflow: hidden;
-    position: relative;
+    border: 1px solid rgba(0, 150, 150, 0.2);
   }
   
   .skill-progress {
     height: 100%;
-    background: linear-gradient(to right, rgba(0, 255, 255, 0.7), rgba(0, 150, 200, 0.9));
+    background: linear-gradient(to right, 
+      rgba(0, 130, 150, 0.6), 
+      rgba(0, 180, 180, 0.7)
+    );
     width: ${props => props.level}%;
-    box-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
+    position: relative;
+    
+    /* Pixelated edge */
+    &::after {
+      content: '';
+      position: absolute;
+      right: 0;
+      top: 0;
+      width: 2px;
+      height: 100%;
+      background: rgba(200, 200, 200, 0.8);
+      animation: ${blink} 1s infinite;
+    }
   }
   
   .skill-category {
     position: absolute;
-    top: 10px;
-    right: 10px;
-    background: rgba(10, 25, 47, 0.7);
-    border: 1px solid rgba(0, 255, 255, 0.5);
-    border-radius: 20px;
+    top: 8px;
+    right: 8px;
+    background: rgba(0, 15, 30, 0.7);
+    border: 1px solid rgba(0, 150, 150, 0.2);
     padding: 2px 8px;
-    font-size: 10px;
-    color: rgba(0, 255, 255, 1);
+    font-size: 12px;
+    color: rgba(0, 150, 150, 0.6);
     font-family: 'VT323', 'Courier New', monospace;
+    text-transform: uppercase;
+    z-index: 2;
   }
 `;
 
-// Status bar
-const StatusBar = styled.div`
+// Retro Status Bar - DARKER
+const RetroStatusBar = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 15px;
-  background: rgba(10, 25, 47, 0.7);
-  border: 2px solid rgba(0, 255, 255, 0.7);
-  border-radius: 8px;
-  margin-top: 20px;
-  box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
+  padding: 12px 15px;
+  background: rgba(0, 15, 30, 0.6);
+  border: 1px solid rgba(0, 150, 150, 0.2);
+  margin-top: 25px;
+  position: relative;
   
   .status-text {
     font-family: 'VT323', 'Courier New', monospace;
-    color: rgba(0, 255, 255, 1);
-    font-size: 14px;
+    color: rgba(0, 180, 180, 0.7);
+    font-size: 16px;
+    text-shadow: 0 0 3px rgba(0, 180, 180, 0.3);
+    
+    /* Blinking cursor */
+    &::after {
+      content: "_";
+      margin-left: 2px;
+      animation: ${blink} 1s step-end infinite;
+    }
   }
   
   .status-count {
     font-family: 'VT323', 'Courier New', monospace;
-    color: white;
-    background: rgba(0, 255, 255, 0.2);
-    padding: 3px 8px;
-    border-radius: 4px;
-    border: 1px solid rgba(0, 255, 255, 0.7);
-  }
-`;
-
-// Control buttons
-const ControlButtons = styled.div`
-  position: absolute;
-  bottom: 15px;
-  right: 15px;
-  display: flex;
-  gap: 10px;
-  z-index: 10;
-  
-  .control-button {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    border: 2px solid rgba(0, 255, 255, 0.7);
-    background: rgba(10, 25, 47, 0.7);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: rgba(0, 255, 255, 1);
-    font-family: 'VT323', 'Courier New', monospace;
-    cursor: pointer;
-    transition: all 0.3s;
-    box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
-    
-    &:hover {
-      background: rgba(0, 255, 255, 0.2);
-      transform: translateY(-2px);
-    }
+    color: rgba(180, 180, 50, 0.8);
+    font-size: 16px;
+    background: rgba(0, 25, 40, 0.5);
+    padding: 3px 10px;
+    border: 1px solid rgba(0, 150, 150, 0.3);
+    text-shadow: 0 0 3px rgba(180, 180, 50, 0.3);
+    animation: ${blink} 2s infinite;
   }
 `;
 
 // Main TechStack component
 const TechStack = () => {
-  // Current date/time and username exactly as specified
-  const currentDateTime = "2025-07-07 11:55:11";
+  // Current date/time and username as specified
+  const currentDateTime = "2025-07-07 15:25:40";
   const username = "itsanubhav009";
   
   const [activeFilter, setActiveFilter] = useState('all');
@@ -809,91 +968,78 @@ const TechStack = () => {
     return techLogos[logoKey] || techLogos.Default;
   }, []);
 
-  // Random ID for UI elements
-  const [scanId] = useState(Math.floor(Math.random() * 9999) + 1000);
+  // Get user initials
+  const getUserInitials = useCallback((username) => {
+    return username.substring(0, 2).toUpperCase();
+  }, []);
 
   return (
-    <SpaceContainer>
+    <CRTContainer>
       <StarField />
-      <SpaceNebula />
+      <RetroNebula />
       
       <ContentContainer>
-        <SpaceshipContainer>
-          <Spaceship>
-            <SpaceshipWindow />
-            <Antenna />
-            <RadarDish />
-            <EngineGlow />
-            
-            <ControlPanel>
-              <div className="panel-title">TECHNOLOGY DATABASE</div>
-              <div className="control-lights">
-                <div className="control-light green"></div>
-                <div className="control-light yellow"></div>
-                <div className="control-light red"></div>
-              </div>
-            </ControlPanel>
-            
-            <ScreenContainer>
-              <ScreenContent>
-                <FilterPanel>
-                  {getUniqueCategories().map((category, index) => (
-                    <FilterButton
-                      key={index}
-                      active={activeFilter === category}
-                      onClick={() => handleFilterClick(category)}
-                    >
-                      {category === 'all' ? 'ALL TECH' : category.toUpperCase()}
-                    </FilterButton>
-                  ))}
-                </FilterPanel>
-                
-                <SkillGrid>
-                  {getFilteredSkills().map((skill, index) => (
-                    <SkillCard 
-                      key={index} 
-                      index={index} 
-                      level={skill.level}
-                      onClick={() => setSelectedSkill(skill)}
-                    >
-                      <div className="skill-category">{skill.category}</div>
-                      <img 
-                        className="skill-logo" 
-                        src={getSkillLogo(skill.logo)} 
-                        alt={skill.name}
-                      />
-                      <div className="skill-name">{skill.name}</div>
-                      <div className="skill-level">Proficiency: {skill.level}%</div>
-                      <div className="skill-bar">
-                        <div 
-                          className="skill-progress"
-                          style={{ width: `${skill.level}%` }}
-                        ></div>
-                      </div>
-                    </SkillCard>
-                  ))}
-                </SkillGrid>
-                
-                <StatusBar>
-                  <div className="status-text">
-                    SCAN #{scanId} | CATEGORY: {activeFilter.toUpperCase()} | USER: {username}
-                  </div>
-                  <div className="status-count">
-                    TECH: {getFilteredSkills().length}/{techSkills.length} | {currentDateTime}
-                  </div>
-                </StatusBar>
-              </ScreenContent>
-            </ScreenContainer>
-            
-            <ControlButtons>
-              <div className="control-button">+</div>
-              <div className="control-button">-</div>
-              <div className="control-button">?</div>
-            </ControlButtons>
-          </Spaceship>
-        </SpaceshipContainer>
+        <RetroTerminal>
+          <RetroHeader>
+            <div className="header-title-container">
+              <div className="header-title">TECH SKILLS DATABASE</div>
+            </div>
+            <div className="header-meta">
+              <div className="user-icon">{getUserInitials(username)}</div>
+              {username}
+              <span className="time-dot"></span>
+              {currentDateTime}
+            </div>
+          </RetroHeader>
+          
+          <RetroFilterSection>
+            {getUniqueCategories().map((category, index) => (
+              <RetroFilterButton
+                key={index}
+                active={activeFilter === category}
+                onClick={() => handleFilterClick(category)}
+              >
+                {category === 'all' ? 'ALL' : category}
+              </RetroFilterButton>
+            ))}
+          </RetroFilterSection>
+          
+          <RetroSkillsGrid>
+            {getFilteredSkills().map((skill, index) => (
+              <RetroSkillCard 
+                key={index} 
+                index={index} 
+                level={skill.level}
+              >
+                <div className="skill-category">{skill.category}</div>
+                <img 
+                  className="skill-logo" 
+                  src={getSkillLogo(skill.logo)} 
+                  alt={skill.name}
+                />
+                <div className="skill-name">{skill.name}</div>
+                <div className="skill-level">LEVEL: {skill.level}%</div>
+                <div className="skill-bar">
+                  <div 
+                    className="skill-progress"
+                    style={{ width: `${skill.level}%` }}
+                  ></div>
+                </div>
+              </RetroSkillCard>
+            ))}
+          </RetroSkillsGrid>
+          
+          <RetroStatusBar>
+            <div className="status-text">
+              SCAN COMPLETE: {getFilteredSkills().length} {activeFilter !== 'all' ? activeFilter.toUpperCase() : 'TOTAL'} SKILLS
+            </div>
+            <div className="status-count">
+              {getFilteredSkills().length}/{techSkills.length}
+            </div>
+          </RetroStatusBar>
+        </RetroTerminal>
       </ContentContainer>
-    </SpaceContainer>
+    </CRTContainer>
   );
 };
 

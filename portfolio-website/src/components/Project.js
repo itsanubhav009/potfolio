@@ -1,51 +1,38 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import styled, { keyframes, css } from 'styled-components';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useScrollReveal, variants } from '../utils/scrollReveal';
 
-// Direct icon imports instead of using the Icon component
-import {
-  IconExternal,
-  IconFolder,
-  IconGitHub,
-} from './Icons/icons';
+// Optimized icons for better performance
+const IconGitHub = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+  </svg>
+);
 
-// Animation keyframes
+const IconExternal = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+    <polyline points="15 3 21 3 21 9"></polyline>
+    <line x1="10" y1="14" x2="21" y2="3"></line>
+  </svg>
+);
+
+const IconFolder = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" role="img" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+  </svg>
+);
+
+// Animations
 const scanline = keyframes`
   0% { transform: translateY(-100%); }
   100% { transform: translateY(100%); }
 `;
 
-const flicker = keyframes`
-  0%, 100% { opacity: 1; }
-  5% { opacity: 0.7; }
-  10% { opacity: 0.9; }
-  15% { opacity: 0.8; }
-  20% { opacity: 1; }
-  50% { opacity: 0.9; }
-  70% { opacity: 0.7; }
-  72% { opacity: 1; }
-  77% { opacity: 0.9; }
-  80% { opacity: 1; }
-`;
-
-const glitch = keyframes`
-  0% { transform: translate(0); }
-  20% { transform: translate(-2px, 2px); }
-  40% { transform: translate(-2px, -2px); }
-  60% { transform: translate(2px, 2px); }
-  80% { transform: translate(2px, -2px); }
-  100% { transform: translate(0); }
-`;
-
 const glow = keyframes`
-  0%, 100% { text-shadow: 0 0 10px rgba(100, 255, 218, 0.5); }
-  50% { text-shadow: 0 0 20px rgba(100, 255, 218, 0.8); }
-`;
-
-const loadingBar = keyframes`
-  0% { width: 0; }
-  100% { width: 100%; }
+  0%, 100% { text-shadow: 0 0 5px rgba(100, 255, 218, 0.5); }
+  50% { text-shadow: 0 0 10px rgba(100, 255, 218, 0.8); }
 `;
 
 const blink = keyframes`
@@ -53,25 +40,12 @@ const blink = keyframes`
   50% { opacity: 0; }
 `;
 
-const rotate = keyframes`
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+const pulse = keyframes`
+  0%, 100% { box-shadow: 0 0 5px rgba(100, 255, 218, 0.3); }
+  50% { box-shadow: 0 0 15px rgba(100, 255, 218, 0.5); }
 `;
 
-const float = keyframes`
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-`;
-
-const tvTurnOn = keyframes`
-  0% { transform: scale(0); opacity: 0; filter: brightness(3); }
-  50% { transform: scale(1.05); opacity: 0.8; filter: brightness(2.5); }
-  75% { transform: scale(0.95); opacity: 1; filter: brightness(0.8); }
-  90% { transform: scale(1.02); opacity: 1; filter: brightness(1.2); }
-  100% { transform: scale(1); opacity: 1; filter: brightness(1); }
-`;
-
-// Styled Components
+// Styled components
 const StyledProjectsSection = styled.section`
   max-width: 1000px;
   position: relative;
@@ -79,15 +53,12 @@ const StyledProjectsSection = styled.section`
   
   &::before {
     content: '';
-    position: fixed;
+    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(
-      rgba(10, 25, 47, 0) 0%,
-      rgba(10, 25, 47, 0.5) 100%
-    );
+    background: radial-gradient(ellipse at top, rgba(10, 25, 47, 0.1) 0%, rgba(10, 25, 47, 0) 60%);
     pointer-events: none;
     z-index: -1;
   }
@@ -108,6 +79,13 @@ const StyledProjectsHeader = styled.div`
     font-size: clamp(26px, 5vw, 32px);
     white-space: nowrap;
     
+    &::before {
+      content: '> ';
+      color: ${props => props.theme.colors.teal};
+      margin-right: 10px;
+      animation: ${blink} 1s step-end infinite;
+    }
+    
     &::after {
       content: '';
       display: block;
@@ -115,7 +93,11 @@ const StyledProjectsHeader = styled.div`
       width: 300px;
       height: 1px;
       margin-left: 20px;
-      background-color: ${props => props.theme.colors.lightestNavy};
+      background: linear-gradient(
+        to right,
+        ${props => props.theme.colors.teal},
+        ${props => props.theme.colors.lightestNavy}
+      );
       
       @media (max-width: 768px) {
         width: 100%;
@@ -128,14 +110,14 @@ const StyledFilterControls = styled.div`
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 10px;
   margin-bottom: 30px;
   position: relative;
+  padding: 15px 0;
   
-  &::before {
+  &::before, &::after {
     content: '';
     position: absolute;
-    top: 0;
     left: 0;
     width: 100%;
     height: 1px;
@@ -147,20 +129,8 @@ const StyledFilterControls = styled.div`
     );
   }
   
-  &::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 1px;
-    background: linear-gradient(
-      to right,
-      rgba(100, 255, 218, 0),
-      rgba(100, 255, 218, 0.5),
-      rgba(100, 255, 218, 0)
-    );
-  }
+  &::before { top: 0; }
+  &::after { bottom: 0; }
 `;
 
 const StyledFilterButton = styled.button`
@@ -171,15 +141,14 @@ const StyledFilterButton = styled.button`
   padding: 0.75rem 1rem;
   font-family: ${props => props.theme.fonts.mono};
   font-size: 13px;
-  transition: all 0.25s cubic-bezier(0.645, 0.045, 0.355, 1);
+  transition: all 0.2s ease;
   cursor: pointer;
   position: relative;
   text-transform: uppercase;
-  letter-spacing: 2px;
+  letter-spacing: 1px;
   
   ${props => props.active && css`
-    animation: ${glow} 2s infinite;
-    box-shadow: 0 0 10px rgba(100, 255, 218, 0.3);
+    box-shadow: 0 0 8px rgba(100, 255, 218, 0.3);
   `}
   
   &:hover {
@@ -191,13 +160,13 @@ const StyledFilterButton = styled.button`
   &::before {
     content: '[ ';
     opacity: ${props => props.active ? 1 : 0};
-    transition: opacity 0.25s;
+    transition: opacity 0.2s ease;
   }
   
   &::after {
     content: ' ]';
     opacity: ${props => props.active ? 1 : 0};
-    transition: opacity 0.25s;
+    transition: opacity 0.2s ease;
   }
   
   &:hover::before,
@@ -208,10 +177,10 @@ const StyledFilterButton = styled.button`
 
 const StyledProjectsGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 20px;
   position: relative;
-  margin-top: 50px;
+  margin-top: 30px;
   
   @media (max-width: 768px) {
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -222,35 +191,18 @@ const StyledProjectsGrid = styled.div`
   }
 `;
 
-const StyledProjectCard = styled.div`
+const StyledProjectCard = styled(motion.div)`
   position: relative;
-  height: 400px;
+  height: 380px;
   background-color: ${props => props.theme.colors.lightNavy};
   border-radius: 4px;
-  transition: all 0.3s;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
   overflow: hidden;
-  animation: ${tvTurnOn} 0.8s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+  box-shadow: 0 10px 30px -15px rgba(2, 12, 27, 0.5);
+  animation: ${pulse} 4s infinite;
   animation-delay: ${props => props.index * 0.2}s;
-  opacity: 0;
   
-  /* Retro CRT screen styling */
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: repeating-linear-gradient(
-      transparent 0px,
-      rgba(0, 0, 0, 0.1) 1px,
-      transparent 2px
-    );
-    pointer-events: none;
-    z-index: 10;
-    opacity: 0.3;
-  }
-  
+  /* Scanline effect */
   &::after {
     content: '';
     position: absolute;
@@ -258,28 +210,24 @@ const StyledProjectCard = styled.div`
     left: 0;
     width: 100%;
     height: 2px;
-    background-color: rgba(100, 255, 218, 0.5);
-    box-shadow: 0 0 10px rgba(100, 255, 218, 0.5);
-    animation: ${scanline} 6s linear infinite;
+    background-color: rgba(100, 255, 218, 0.3);
+    box-shadow: 0 0 5px rgba(100, 255, 218, 0.3);
+    animation: ${scanline} 8s linear infinite;
     pointer-events: none;
     z-index: 11;
   }
   
   &:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 10px 30px -15px rgba(2, 12, 27, 0.7);
-    
-    .project-image {
-      filter: grayscale(0) brightness(1.1);
-    }
+    transform: translateY(-7px);
+    box-shadow: 0 10px 30px -10px rgba(100, 255, 218, 0.3);
     
     .project-title {
       color: ${props => props.theme.colors.teal};
-      animation: ${glow} 1.5s infinite;
     }
     
-    .project-description {
-      opacity: 0.9;
+    .project-links a {
+      opacity: 1;
+      transform: translateY(0);
     }
   }
 `;
@@ -287,23 +235,42 @@ const StyledProjectCard = styled.div`
 const StyledProjectInner = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  align-items: flex-start;
-  position: relative;
   height: 100%;
-  padding: 2rem 1.75rem;
-  border-radius: 4px;
-  background-color: ${props => props.theme.colors.lightNavy};
+  padding: 2rem;
+  position: relative;
+  
+  /* Subtle retro CRT lines */
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: repeating-linear-gradient(
+      to bottom,
+      transparent,
+      transparent 2px,
+      rgba(10, 25, 47, 0.05) 2px,
+      rgba(10, 25, 47, 0.05) 4px
+    );
+    opacity: 0.15;
+    pointer-events: none;
+    z-index: 0;
+  }
 `;
 
 const StyledProjectHeader = styled.div`
   width: 100%;
+  position: relative;
+  z-index: 1;
+  margin-bottom: auto;
   
   .project-top {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 35px;
+    margin-bottom: 20px;
   }
   
   .folder {
@@ -317,286 +284,17 @@ const StyledProjectHeader = styled.div`
   .project-links {
     display: flex;
     align-items: center;
-    margin-right: -10px;
     color: ${props => props.theme.colors.lightSlate};
+    gap: 10px;
     
     a {
       display: flex;
       justify-content: center;
       align-items: center;
       padding: 5px 7px;
-      
-      svg {
-        width: 22px;
-        height: 22px;
-      }
-      
-      &:hover {
-        color: ${props => props.theme.colors.teal};
-      }
-    }
-  }
-  
-  .project-title {
-    margin: 0 0 10px;
-    font-size: clamp(24px, 5vw, 28px);
-    color: ${props => props.theme.colors.lightestSlate};
-    font-family: ${props => props.theme.fonts.mono};
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    transition: all 0.25s;
-    position: relative;
-    
-    &::before {
-      content: '> ';
-      color: ${props => props.theme.colors.teal};
-      font-family: ${props => props.theme.fonts.mono};
-      animation: ${blink} 1s infinite;
-    }
-  }
-  
-  .project-description {
-    color: ${props => props.theme.colors.slate};
-    font-size: 15px;
-    opacity: 0.8;
-    transition: opacity 0.3s;
-    font-family: ${props => props.theme.fonts.mono};
-    line-height: 1.5;
-  }
-`;
-
-const StyledTechList = styled.ul`
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  padding: 0;
-  margin: 20px 0 0;
-  list-style: none;
-  
-  li {
-    font-family: ${props => props.theme.fonts.mono};
-    font-size: 12px;
-    color: ${props => props.theme.colors.teal};
-    padding: 3px 7px;
-    border-radius: 3px;
-    background-color: rgba(100, 255, 218, 0.1);
-    position: relative;
-    overflow: hidden;
-    transition: all 0.3s;
-    
-    &:hover {
-      background-color: rgba(100, 255, 218, 0.2);
-      transform: translateY(-2px);
-    }
-    
-    &::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(
-        90deg,
-        transparent,
-        rgba(100, 255, 218, 0.2),
-        transparent
-      );
-      transition: left 0.5s;
-    }
-    
-    &:hover::before {
-      left: 100%;
-    }
-  }
-`;
-
-const StyledProjectImage = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  border-radius: 4px;
-  background-color: ${props => props.theme.colors.navy};
-  background-image: url(${props => props.image});
-  background-size: cover;
-  background-position: center;
-  filter: grayscale(100%) brightness(0.6);
-  transition: all 0.3s;
-  z-index: 1;
-  
-  &::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(
-      to bottom,
-      rgba(10, 25, 47, 0.7),
-      rgba(10, 25, 47, 0.9)
-    );
-  }
-`;
-
-const StyledProjectContent = styled.div`
-  position: relative;
-  z-index: 2;
-  height: 100%;
-  padding: 25px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-`;
-
-const StyledFeaturedProject = styled.div`
-  display: grid;
-  grid-template-columns: repeat(12, 1fr);
-  gap: 10px;
-  align-items: center;
-  position: relative;
-  margin-bottom: 100px;
-  
-  &:nth-of-type(odd) {
-    .project-content {
-      grid-column: 7 / -1;
-      text-align: right;
-      
-      @media (max-width: 768px) {
-        grid-column: 1 / -1;
-        padding: 40px 40px 30px;
-      }
-      
-      @media (max-width: 480px) {
-        padding: 25px 25px 20px;
-      }
-    }
-    
-    .project-tech-list {
-      justify-content: flex-end;
-      
-      @media (max-width: 768px) {
-        justify-content: flex-start;
-      }
-    }
-    
-    .project-links {
-      justify-content: flex-end;
-      margin-left: 0;
-      margin-right: -10px;
-      
-      @media (max-width: 768px) {
-        justify-content: flex-start;
-        margin-left: -10px;
-        margin-right: 0;
-      }
-    }
-    
-    .project-image {
-      grid-column: 1 / 8;
-      
-      @media (max-width: 768px) {
-        grid-column: 1 / -1;
-      }
-    }
-  }
-  
-  .project-content {
-    position: relative;
-    grid-column: 1 / 7;
-    grid-row: 1 / -1;
-    
-    @media (max-width: 768px) {
-      grid-column: 1 / -1;
-      padding: 40px 40px 30px;
-      z-index: 5;
-    }
-    
-    @media (max-width: 480px) {
-      padding: 30px 25px 20px;
-    }
-  }
-  
-  .project-overline {
-    margin: 10px 0;
-    color: ${props => props.theme.colors.teal};
-    font-family: ${props => props.theme.fonts.mono};
-    font-size: 13px;
-    font-weight: 400;
-  }
-  
-  .project-title {
-    color: ${props => props.theme.colors.lightestSlate};
-    font-size: clamp(24px, 5vw, 28px);
-    
-    @media (max-width: 768px) {
-      color: ${props => props.theme.colors.white};
-    }
-  }
-  
-  .project-description {
-    position: relative;
-    padding: 20px;
-    border-radius: 4px;
-    background-color: ${props => props.theme.colors.lightNavy};
-    color: ${props => props.theme.colors.lightSlate};
-    font-size: 15px;
-    
-    &:hover {
-      background-color: rgba(100, 255, 218, 0.1);
-    }
-    
-    @media (max-width: 768px) {
-      padding: 20px 0;
-      background-color: transparent;
-      box-shadow: none;
-      
-      &:hover {
-        background-color: transparent;
-        box-shadow: none;
-      }
-    }
-  }
-  
-  .project-tech-list {
-    display: flex;
-    flex-wrap: wrap;
-    position: relative;
-    z-index: 2;
-    margin: 25px 0 10px;
-    padding: 0;
-    list-style: none;
-    
-    li {
-      margin: 0 20px 5px 0;
-      color: ${props => props.theme.colors.lightSlate};
-      font-family: ${props => props.theme.fonts.mono};
-      font-size: 13px;
-      white-space: nowrap;
-    }
-    
-    @media (max-width: 768px) {
-      margin: 10px 0;
-      
-      li {
-        margin: 0 10px 5px 0;
-        color: ${props => props.theme.colors.lightestSlate};
-      }
-    }
-  }
-  
-  .project-links {
-    display: flex;
-    align-items: center;
-    position: relative;
-    margin-top: 10px;
-    margin-left: -10px;
-    color: ${props => props.theme.colors.lightestSlate};
-    
-    a {
-      padding: 10px;
+      opacity: 0.7;
+      transform: translateY(5px);
+      transition: all 0.2s ease;
       
       svg {
         width: 20px;
@@ -605,110 +303,89 @@ const StyledFeaturedProject = styled.div`
       
       &:hover {
         color: ${props => props.theme.colors.teal};
+        transform: translateY(-2px);
+        opacity: 1;
       }
     }
   }
   
-  .project-image {
-    grid-column: 6 / -1;
-    grid-row: 1 / -1;
-    position: relative;
-    z-index: 1;
+  .project-title {
+    margin: 0 0 10px;
+    font-size: 22px;
+    color: ${props => props.theme.colors.lightestSlate};
+    font-family: ${props => props.theme.fonts.mono};
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.25s;
     
-    @media (max-width: 768px) {
-      grid-column: 1 / -1;
-      height: 100%;
-      opacity: 0.25;
+    &::before {
+      content: '> ';
+      color: ${props => props.theme.colors.teal};
+      font-family: ${props => props.theme.fonts.mono};
     }
+  }
+  
+  .project-date {
+    color: ${props => props.theme.colors.slate};
+    font-family: ${props => props.theme.fonts.mono};
+    font-size: 14px;
+    margin-bottom: 15px;
+  }
+  
+  .project-description {
+    color: ${props => props.theme.colors.slate};
+    font-size: 15px;
+    line-height: 1.5;
     
-    a {
-      width: 100%;
-      height: 100%;
-      background-color: ${props => props.theme.colors.teal};
-      border-radius: 4px;
-      vertical-align: middle;
-      transition: all 0.25s cubic-bezier(0.645, 0.045, 0.355, 1);
+    ul {
+      padding-left: 15px;
+      margin: 10px 0 0;
       
-      &:hover,
-      &:focus {
-        background: transparent;
-        outline: 0;
+      li {
+        position: relative;
+        padding-left: 15px;
+        margin-bottom: 5px;
         
-        &::before,
-        .img {
-          background: transparent;
-          filter: none;
+        &::before {
+          content: '▹';
+          position: absolute;
+          left: 0;
+          color: ${props => props.theme.colors.teal};
         }
-      }
-      
-      &::before {
-        content: '';
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        z-index: 3;
-        transition: all 0.25s cubic-bezier(0.645, 0.045, 0.355, 1);
-        background-color: ${props => props.theme.colors.navy};
-        mix-blend-mode: screen;
-      }
-    }
-    
-    .img {
-      position: relative;
-      border-radius: 4px;
-      mix-blend-mode: multiply;
-      filter: grayscale(100%) contrast(1) brightness(90%);
-      
-      @media (max-width: 768px) {
-        object-fit: cover;
-        width: auto;
-        height: 100%;
-        filter: grayscale(100%) contrast(1) brightness(50%);
       }
     }
   }
 `;
 
-const StyledCRTOverlay = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(
-    rgba(18, 16, 16, 0) 50%, 
-    rgba(0, 0, 0, 0.25) 50%
-  );
-  background-size: 100% 4px;
-  z-index: 999;
-  pointer-events: none;
-  opacity: 0.1;
-`;
-
-const StyledVHSEffect = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(
-    transparent,
-    rgba(100, 255, 218, 0.03),
-    transparent
-  );
-  z-index: 998;
-  pointer-events: none;
-  opacity: 0.3;
-  animation: ${scanline} 10s linear infinite;
+const StyledTechList = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 0;
+  margin: 15px 0 0;
+  position: relative;
+  z-index: 1;
+  
+  span {
+    font-family: ${props => props.theme.fonts.mono};
+    font-size: 12px;
+    color: ${props => props.theme.colors.lightSlate};
+    padding: 3px 7px;
+    border-radius: 3px;
+    background-color: rgba(100, 255, 218, 0.1);
+    transition: all 0.2s ease;
+    
+    &:hover {
+      background-color: rgba(100, 255, 218, 0.2);
+      color: ${props => props.theme.colors.teal};
+      transform: translateY(-2px);
+    }
+  }
 `;
 
 const StyledProjectsStatus = styled.div`
   padding: 10px 15px;
-  margin-top: 20px;
+  margin-top: 30px;
   font-family: ${props => props.theme.fonts.mono};
   font-size: 14px;
   color: ${props => props.theme.colors.slate};
@@ -751,187 +428,192 @@ const StyledProjectsStatus = styled.div`
   }
 `;
 
-// Additional styled components for loading elements
-const StyledLoadingContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 200px;
-  font-family: ${props => props.theme.fonts.mono};
-  color: ${props => props.theme.colors.teal};
-`;
+// Memoized Project Card for better performance
+const ProjectCard = React.memo(({ project, index }) => {
+  return (
+    <StyledProjectCard 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1, transition: { duration: 0.3, delay: index * 0.1 } }}
+      exit={{ opacity: 0 }}
+      whileHover={{ scale: 1.02 }}
+      index={index}
+    >
+      <StyledProjectInner>
+        <StyledProjectHeader>
+          <div className="project-top">
+            <div className="folder">
+              <IconFolder />
+            </div>
+            <div className="project-links">
+              {project.github && (
+                <a href={project.github} aria-label="GitHub Link" target="_blank" rel="noreferrer">
+                  <IconGitHub />
+                </a>
+              )}
+              {project.external && (
+                <a href={project.external} aria-label="External Link" target="_blank" rel="noreferrer">
+                  <IconExternal />
+                </a>
+              )}
+            </div>
+          </div>
+          
+          <h3 className="project-title">{project.title}</h3>
+          <div className="project-date">{project.date}</div>
+          
+          <div className="project-description">
+            <ul>
+              {project.points.map((point, i) => (
+                <li key={i}>{point}</li>
+              ))}
+            </ul>
+          </div>
+        </StyledProjectHeader>
+        
+        <StyledTechList>
+          {project.tech.map((tech, i) => (
+            <span key={i}>{tech}</span>
+          ))}
+        </StyledTechList>
+      </StyledProjectInner>
+    </StyledProjectCard>
+  );
+});
 
-const StyledLoadingText = styled.div`
-  margin-bottom: 15px;
-  letter-spacing: 2px;
-  font-size: 18px;
-  animation: ${blink} 1s infinite;
-`;
+ProjectCard.displayName = 'ProjectCard';
 
-const StyledLoadingBarContainer = styled.div`
-  width: 300px;
-  height: 10px;
-  background-color: rgba(100, 255, 218, 0.1);
-  border: 1px solid ${props => props.theme.colors.teal};
-  border-radius: 5px;
-  overflow: hidden;
-`;
-
-const StyledLoadingBar = styled.div`
-  height: 100%;
-  background-color: ${props => props.theme.colors.teal};
-  width: 0;
-  animation: ${loadingBar} 1.5s forwards;
-`;
-
-// Define project data
-const featuredProjects = [
+// Project data based on exact user info
+const projectsData = [
   {
-    title: "VHS Tracker",
-    description: "A comprehensive web application for tracking and organizing your VHS collection. Features include barcode scanning, cover art retrieval, and condition tracking.",
-    tech: ["React", "Node.js", "Express", "MongoDB", "SCSS"],
-    github: "https://github.com",
-    external: "https://vhstracker.com",
-    image: "https://images.unsplash.com/photo-1603048588665-791ca8aea617",
-    featured: true,
+    id: 1,
+    title: "SEO Analyzer",
+    date: "May 2024 – June 2024",
+    points: [
+      "Engineered an SEO tool for real-time feedback on 6 key on-page metrics.",
+      "Deployed with a dynamic preview."
+    ],
+    tech: ["React", "Node.js", "Express.js", "TextRazor API"],
+    github: "https://github.com/itsanubhav009/seo-analyzer",
+    external: "https://seo-analyzer-2b8f.vercel.app",
     category: "web"
   },
   {
-    title: "Retrowave FM",
-    description: "A streaming music platform focused exclusively on synthwave, vaporwave, and retro electronic music. Features a virtual cassette deck interface and night driving visualizer.",
-    tech: ["React", "Web Audio API", "Firebase", "Redux", "Styled Components"],
-    github: "https://github.com",
-    external: "https://retrowave.fm",
-    image: "https://images.unsplash.com/photo-1518002171953-a080ee817e1f",
-    featured: true,
-    category: "music"
-  },
-  {
-    title: "Pixel Art Generator",
-    description: "A tool for creating pixel art with various retro console color palettes. Export your creations as PNGs or animated GIFs.",
-    tech: ["JavaScript", "Canvas API", "HTML5", "CSS3"],
-    github: "https://github.com",
-    external: "https://pixelartgen.com",
-    image: "https://images.unsplash.com/photo-1558655146-9f40138edfeb",
-    featured: true,
-    category: "design"
-  }
-];
-
-const otherProjects = [
-  {
-    title: "Arcade Score Tracker",
-    description: "Mobile app for tracking high scores across arcade games. Includes leaderboards and achievement badges.",
-    tech: ["React Native", "Firebase", "Expo"],
-    github: "https://github.com",
+    id: 2,
+    title: "AI Agent Chatbot",
+    date: "Jan 2024 – March 2024",
+    points: [
+      "Built a context-aware AI chatbot using 2 open-source models, improving query response time.",
+      "Integrated a vector database for efficient semantic search over 1,200+ custom documents."
+    ],
+    tech: ["Python", "LangChain", "Hugging Face"],
+    github: "https://github.com/itsanubhav009/ai-agent-chatbot",
     external: "",
-    category: "mobile"
+    category: "ai"
   },
   {
-    title: "Synthwave Portfolio",
-    description: "A customizable portfolio template with a synthwave aesthetic, featuring neon colors and grid backgrounds.",
-    tech: ["HTML", "CSS", "JavaScript", "Three.js"],
-    github: "https://github.com",
-    external: "https://synthfolio.dev",
-    category: "web"
+    id: 3,
+    title: "DomainVault",
+    date: "July 2023 – Oct 2023",
+    points: [
+      "Developed a mail server with custom domain control and integrated spam reporting.",
+      "Used multi-threading to manage secure attachments and 25+ simultaneous client sessions."
+    ],
+    tech: ["C++", "SMTP", "POP3", "SQLite", "Multi-threading"],
+    github: "https://github.com/itsanubhav009/domainvault",
+    external: "",
+    category: "backend"
   },
   {
-    title: "8-bit Weather App",
-    description: "Weather forecasts displayed in retro 8-bit graphics. Changes appearance based on current conditions.",
-    tech: ["React", "Weather API", "Canvas", "Pixel Art"],
-    github: "https://github.com",
-    external: "https://8bitweather.app",
-    category: "web"
-  },
-  {
-    title: "Retro Game Database",
-    description: "Searchable database of retro video games with metadata, release dates, and screenshots.",
-    tech: ["Vue.js", "Node.js", "PostgreSQL", "REST API"],
-    github: "https://github.com",
+    id: 4,
+    title: "IntelliRoute",
+    date: "Feb 2024 – April 2024",
+    points: [
+      "Created a route-matching platform to handle complex concurrent spatial queries.",
+      "Enabled user discovery and private chat via an interactive map interface."
+    ],
+    tech: ["React.js", "Node.js", "PostGIS", "Supabase"],
+    github: "https://github.com/itsanubhav009/intelliroute",
     external: "",
     category: "web"
   },
   {
-    title: "Cassette Label Maker",
-    description: "Generate printable cassette J-cards and labels with custom artwork and track listings.",
-    tech: ["React", "Canvas API", "PDF Generation"],
-    github: "https://github.com",
-    external: "https://cassettelabels.io",
-    category: "design"
+    id: 5,
+    title: "MCP Server",
+    date: "May 2023 – June 2023",
+    points: [
+      "Built a resilient TCP chat server to support over 50 concurrent clients.",
+      "Used pthreads and user authentication to maintain sub-100ms latency."
+    ],
+    tech: ["C++", "Socket Programming", "Threads"],
+    github: "https://github.com/itsanubhav009/mcp-server",
+    external: "",
+    category: "networking"
   },
   {
-    title: "CRT Terminal Emulator",
-    description: "A browser-based terminal emulator with authentic CRT effects and green phosphor display.",
-    tech: ["JavaScript", "WebGL", "CSS Effects"],
-    github: "https://github.com",
+    id: 6,
+    title: "Data Visualization Dashboard",
+    date: "July 2023 – Aug 2023",
+    points: [
+      "Designed a responsive dashboard to visualize real-time metrics from 3 REST APIs.",
+      "Enhanced data comprehension with 5 interactive charts and a modern UI."
+    ],
+    tech: ["Next.js", "Chart.js", "Tailwind CSS"],
+    github: "https://github.com/itsanubhav009/data-viz-dashboard",
     external: "",
-    category: "tools"
+    category: "web"
+  },
+  {
+    id: 7,
+    title: "E-Vidhi: Legal Connect Platform",
+    date: "Nov 2023 – Dec 2023",
+    points: [
+      "Built a secure lawyer-client platform with real-time chat and JWT authentication.",
+      "Engineered a scalable backend with MongoDB to efficiently manage user sessions."
+    ],
+    tech: ["MERN Stack", "Socket.io", "JWT"],
+    github: "https://github.com/itsanubhav009/e-vidhi",
+    external: "",
+    category: "web"
   }
 ];
 
 const Projects = () => {
   const [activeCategory, setActiveCategory] = useState('all');
-  const [showStatic, setShowStatic] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
   const [visibleProjects, setVisibleProjects] = useState([]);
-  const { ref, controls, inView } = useScrollReveal();
+  const { ref, controls } = useScrollReveal();
   
-  // Updated exact date/time and username
-  const currentDate = "2025-06-23 16:51:26";
+  // Current date/time and username exactly as provided
+  const currentDateTime = "2025-07-08 08:28:31";
   const username = "itsanubhav009";
-
-  useEffect(() => {
-    // Simulate loading
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-      setVisibleProjects(otherProjects);
-    }, 1500);
-    
-    // Occasional static effect
-    const staticInterval = setInterval(() => {
-      if (Math.random() > 0.7) {
-        setShowStatic(true);
-        setTimeout(() => setShowStatic(false), 150);
-      }
-    }, 3000);
-    
-    return () => {
-      clearTimeout(timer);
-      clearInterval(staticInterval);
-    };
+  
+  // Filter projects by category
+  const handleFilterClick = useCallback((category) => {
+    setActiveCategory(category);
   }, []);
-
+  
   // Filter projects when category changes
   useEffect(() => {
     if (activeCategory === 'all') {
-      setVisibleProjects(otherProjects);
+      setVisibleProjects(projectsData);
     } else {
-      setVisibleProjects(otherProjects.filter(project => project.category === activeCategory));
+      setVisibleProjects(projectsData.filter(project => project.category === activeCategory));
     }
   }, [activeCategory]);
-
-  const handleFilterClick = (category) => {
-    setShowStatic(true);
-    
-    setTimeout(() => {
-      setActiveCategory(category);
-      setShowStatic(false);
-    }, 500);
-  };
-
-  const getCategories = () => {
-    const categories = new Set(['all']);
-    otherProjects.forEach(project => categories.add(project.category));
-    return Array.from(categories);
-  };
-
+  
+  // Load projects with animation
+  useEffect(() => {
+    setVisibleProjects(projectsData);
+  }, []);
+  
+  // Get unique categories for filter buttons
+  const categories = useMemo(() => {
+    const categorySet = new Set(['all']);
+    projectsData.forEach(project => categorySet.add(project.category));
+    return Array.from(categorySet);
+  }, []);
+  
   return (
     <StyledProjectsSection id="projects">
-      {/* CRT Overlay for retro effect */}
-      <StyledCRTOverlay />
-      <StyledVHSEffect />
-      
       <motion.div
         ref={ref}
         initial="hidden"
@@ -942,122 +624,38 @@ const Projects = () => {
           <h2 className="section-heading">Projects</h2>
         </StyledProjectsHeader>
         
-        {isLoading ? (
-          <StyledLoadingContainer>
-            <StyledLoadingText>LOADING PROJECTS...</StyledLoadingText>
-            <StyledLoadingBarContainer>
-              <StyledLoadingBar />
-            </StyledLoadingBarContainer>
-          </StyledLoadingContainer>
-        ) : (
-          <>
-            {/* Featured Projects */}
-            <div>
-              {featuredProjects.map((project, index) => (
-                <StyledFeaturedProject key={index}>
-                  <div className="project-content">
-                    <p className="project-overline">Featured Project</p>
-                    <h3 className="project-title">{project.title}</h3>
-                    <div className="project-description">
-                      <p>{project.description}</p>
-                    </div>
-                    <ul className="project-tech-list">
-                      {project.tech.map((tech, i) => (
-                        <li key={i}>{tech}</li>
-                      ))}
-                    </ul>
-                    <div className="project-links">
-                      {project.github && (
-                        <a href={project.github} aria-label="GitHub Link" target="_blank" rel="noreferrer">
-                          <IconGitHub />
-                        </a>
-                      )}
-                      {project.external && (
-                        <a href={project.external} aria-label="External Link" target="_blank" rel="noreferrer">
-                          <IconExternal />
-                        </a>
-                      )}
-                    </div>
-                  </div>
-                  
-                  <div className="project-image">
-                    <a href={project.external || project.github || '#'}>
-                      <img src={project.image} alt={project.title} className="img" />
-                    </a>
-                  </div>
-                </StyledFeaturedProject>
-              ))}
-            </div>
-            
-            {/* Other Projects */}
-            <div>
-              <h2 style={{ textAlign: 'center', marginTop: '80px', marginBottom: '40px' }}>
-                Other Projects
-              </h2>
-              
-              <StyledFilterControls>
-                {getCategories().map((category, index) => (
-                  <StyledFilterButton 
-                    key={index}
-                    active={activeCategory === category}
-                    onClick={() => handleFilterClick(category)}
-                  >
-                    {category.toUpperCase()}
-                  </StyledFilterButton>
-                ))}
-              </StyledFilterControls>
-              
-              <StyledProjectsGrid>
-                {visibleProjects.map((project, index) => (
-                  <StyledProjectCard key={index} index={index}>
-                    <StyledProjectInner>
-                      <StyledProjectHeader>
-                        <div className="project-top">
-                          <div className="folder">
-                            <IconFolder />
-                          </div>
-                          <div className="project-links">
-                            {project.github && (
-                              <a href={project.github} aria-label="GitHub Link" target="_blank" rel="noreferrer">
-                                <IconGitHub />
-                              </a>
-                            )}
-                            {project.external && (
-                              <a href={project.external} aria-label="External Link" target="_blank" rel="noreferrer">
-                                <IconExternal />
-                              </a>
-                            )}
-                          </div>
-                        </div>
-                        
-                        <h3 className="project-title">{project.title}</h3>
-                        <div className="project-description">
-                          <p>{project.description}</p>
-                        </div>
-                      </StyledProjectHeader>
-                      
-                      <div>
-                        <StyledTechList>
-                          {project.tech.map((tech, i) => (
-                            <li key={i}>{tech}</li>
-                          ))}
-                        </StyledTechList>
-                      </div>
-                    </StyledProjectInner>
-                  </StyledProjectCard>
-                ))}
-              </StyledProjectsGrid>
-              
-              <StyledProjectsStatus>
-                <div className="status-text">PROJECTS LOADED</div>
-                <div className="status-info">
-                  <span className="username">{username}</span>
-                  <span className="timestamp">{currentDate}</span>
-                </div>
-              </StyledProjectsStatus>
-            </div>
-          </>
-        )}
+        <StyledFilterControls>
+          {categories.map((category, index) => (
+            <StyledFilterButton 
+              key={index}
+              active={activeCategory === category}
+              onClick={() => handleFilterClick(category)}
+              aria-label={`Filter by ${category}`}
+            >
+              {category === 'all' ? 'ALL' : category.toUpperCase()}
+            </StyledFilterButton>
+          ))}
+        </StyledFilterControls>
+        
+        <AnimatePresence>
+          <StyledProjectsGrid>
+            {visibleProjects.map((project, index) => (
+              <ProjectCard 
+                key={project.id}
+                project={project}
+                index={index}
+              />
+            ))}
+          </StyledProjectsGrid>
+        </AnimatePresence>
+        
+        <StyledProjectsStatus>
+          <div className="status-text">PROJECTS LOADED: {visibleProjects.length}</div>
+          <div className="status-info">
+            <span className="username">{username}</span>
+            <span className="timestamp">{currentDateTime}</span>
+          </div>
+        </StyledProjectsStatus>
       </motion.div>
     </StyledProjectsSection>
   );

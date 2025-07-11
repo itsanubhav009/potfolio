@@ -29,7 +29,7 @@ function App() {
     // We're keeping just dark theme for now, but setting up for future light theme implementation
   };
   
-  // Function to toggle retro effects
+  // Function to toggle retro effects (keeping the function for programmatic use)
   const toggleRetroEffects = () => {
     setRetroEffects(prev => !prev);
     
@@ -85,13 +85,6 @@ function App() {
           <>
             <RetroCursor />
             <Layout />
-            <button 
-              className="retro-toggle" 
-              onClick={toggleRetroEffects}
-              aria-label={retroEffects ? "Disable Retro Effects" : "Enable Retro Effects"}
-            >
-              {retroEffects ? "CRT: ON" : "CRT: OFF"}
-            </button>
           </>
         )}
       </ThemeProvider>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { motion } from 'framer-motion';
 import { useScrollReveal, variants } from '../utils/scrollReveal';
@@ -34,6 +34,28 @@ const glow = keyframes`
   50% { box-shadow: 0 0 10px rgba(100, 255, 218, 0.5), 0 0 15px rgba(100, 255, 218, 0.3); }
 `;
 
+const hologramFlicker = keyframes`
+  0%, 100% { opacity: 1; }
+  5% { opacity: 0.8; }
+  10% { opacity: 0.9; }
+  15% { opacity: 0.7; }
+  20% { opacity: 1; }
+  50% { opacity: 0.9; }
+  70% { opacity: 0.8; }
+  72% { opacity: 1; }
+`;
+
+const rotate3D = keyframes`
+  0% { transform: perspective(1000px) rotateX(0deg) rotateY(0deg); }
+  50% { transform: perspective(1000px) rotateX(2deg) rotateY(2deg); }
+  100% { transform: perspective(1000px) rotateX(0deg) rotateY(0deg); }
+`;
+
+const pulse = keyframes`
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+`;
+
 // ============== Styled Components ==============
 const StyledExperienceSection = styled.section`
   max-width: 1200px;
@@ -64,13 +86,15 @@ const StyledSectionTitle = styled(motion.h2)`
   margin-bottom: 60px;
   text-align: center;
   position: relative;
+  text-transform: uppercase;
+  letter-spacing: 3px;
   
   /* Retro underline */
   &::after {
     content: '';
     display: block;
-    width: 100px;
-    height: 2px;
+    width: 150px;
+    height: 3px;
     background: #64ffda;
     margin: 10px auto 0;
     box-shadow: 0 0 8px #64ffda;
@@ -134,6 +158,7 @@ const StyledTimeline = styled.div`
       rgba(100, 255, 218, 0.5) 90%, 
       rgba(100, 255, 218, 0) 100%);
     transform: translateX(-50%);
+    box-shadow: 0 0 15px rgba(100, 255, 218, 0.3);
     
     @media (max-width: 768px) {
       left: 30px;
@@ -162,11 +187,43 @@ const StyledTimeline = styled.div`
   }
 `;
 
+const SectionHeading = styled.h3`
+  color: ${props => props.color || '#f7df1e'};
+  font-size: 28px;
+  font-family: 'VT323', 'Courier New', monospace;
+  text-align: center;
+  margin: 40px 0 30px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  position: relative;
+  display: inline-block;
+  z-index: 3;
+  text-shadow: 0 0 10px rgba(${props => 
+    props.color === '#f7df1e' ? '247, 223, 30' : 
+    props.color === '#9d00ff' ? '157, 0, 255' : 
+    '100, 255, 218'}, 0.5);
+  animation: ${pulse} 4s infinite ease-in-out;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: ${props => props.color || '#f7df1e'};
+    box-shadow: 0 0 10px rgba(${props => 
+      props.color === '#f7df1e' ? '247, 223, 30' : 
+      props.color === '#9d00ff' ? '157, 0, 255' : 
+      '100, 255, 218'}, 0.7);
+  }
+`;
+
 const StyledTimelineNode = styled.div`
   position: relative;
   display: flex;
   width: 100%;
-  margin: 100px 0; /* Increased spacing between nodes */
+  margin: 60px 0;
   
   &:first-child {
     margin-top: 40px;
@@ -226,7 +283,7 @@ const StyledTimelineNode = styled.div`
   
   @media (max-width: 768px) {
     justify-content: flex-start;
-    margin: 80px 0; /* Adjusted spacing for mobile */
+    margin: 60px 0;
     
     .timeline-content {
       margin-left: 60px;
@@ -254,7 +311,7 @@ const StyledPlanetNode = styled.div`
   transform: translateX(-50%);
   width: 30px;
   height: 30px;
-  background: #64ffda;
+  background: ${props => props.nodeColor || '#64ffda'};
   border-radius: 50%;
   z-index: 2;
   transition: all 0.3s ease;
@@ -269,7 +326,7 @@ const StyledPlanetNode = styled.div`
     position: absolute;
     width: 44px;
     height: 44px;
-    border: 2px solid #64ffda;
+    border: 2px solid ${props => props.nodeColor || '#64ffda'};
     border-radius: 50%;
     transition: all 0.3s ease;
   }
@@ -297,19 +354,19 @@ const StyledPlanetNode = styled.div`
   }
 `;
 
-// Fixed position for date to prevent cut-off
 const StyledTimelineDate = styled.div`
   position: absolute;
   top: 0;
   font-family: 'VT323', 'Courier New', monospace;
-  color: #64ffda;
-  font-size: 14px;
+  color: ${props => props.dateColor || '#64ffda'};
+  font-size: 16px;
   white-space: nowrap;
-  background: rgba(10, 25, 47, 0.7);
-  padding: 5px 10px;
+  background: rgba(10, 25, 47, 0.8);
+  padding: 5px 15px;
   border-radius: 4px;
-  border: 1px solid rgba(100, 255, 218, 0.3);
-  z-index: 5; /* Ensure it's above other elements */
+  border: 1px solid ${props => props.dateColor || 'rgba(100, 255, 218, 0.3)'};
+  z-index: 5;
+  box-shadow: 0 0 10px rgba(100, 255, 218, 0.2);
   
   /* Terminal cursor */
   &::after {
@@ -317,7 +374,7 @@ const StyledTimelineDate = styled.div`
     display: inline-block;
     width: 8px;
     height: 15px;
-    background: #64ffda;
+    background: ${props => props.dateColor || '#64ffda'};
     margin-left: 5px;
     animation: ${blink} 1s step-end infinite;
     vertical-align: middle;
@@ -325,20 +382,19 @@ const StyledTimelineDate = styled.div`
 `;
 
 const StyledTimelineContent = styled(motion.div)`
-  width: calc(50% - 60px); /* Increased margin to accommodate dates */
-  background: rgba(17, 34, 64, 0.7);
+  width: calc(50% - 60px);
+  background: rgba(17, 34, 64, 0.85);
   backdrop-filter: blur(4px);
-  border: 1px solid #64ffda;
+  border: 1px solid ${props => props.borderColor || '#64ffda'};
   border-radius: 8px;
-  padding: 20px;
+  padding: 25px;
   position: relative;
   display: flex;
   flex-direction: column;
   transition: all 0.3s ease;
-  margin-top: 20px; /* Added space at top for date */
-  
-  /* Terminal style */
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  margin-top: 20px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.3), 0 0 5px rgba(100, 255, 218, 0.2);
+  animation: ${rotate3D} 10s infinite ease-in-out;
   
   /* Scanlines */
   &::after {
@@ -361,41 +417,72 @@ const StyledTimelineContent = styled(motion.div)`
     z-index: 1;
   }
   
+  /* Terminal window header */
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 6px;
+    background: linear-gradient(to right, 
+      ${props => props.borderColor || '#64ffda'}, 
+      ${props => props.borderColorAlt || '#9d00ff'}
+    );
+    border-radius: 8px 8px 0 0;
+  }
+  
+  &:hover {
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.4), 0 0 10px rgba(100, 255, 218, 0.3);
+    transform: perspective(1000px) rotateX(2deg) rotateY(2deg) scale(1.02);
+  }
+  
   @media (max-width: 768px) {
-    width: calc(100% - 80px); /* Increased width for better readability */
-    margin-top: 40px; /* Additional space for date on mobile */
+    width: calc(100% - 80px);
+    margin-top: 40px;
   }
 `;
 
-const StyledCompanyTitle = styled.h3`
+const StyledTitle = styled.h3`
   font-family: 'VT323', 'Courier New', monospace;
-  font-size: 22px;
-  color: #e6f1ff;
+  font-size: 24px;
+  color: ${props => props.color || '#e6f1ff'};
   margin: 0 0 10px 0;
   z-index: 2;
-  
-  .title {
-    color: #ccd6f6;
-  }
-  
-  .company {
-    color: #64ffda;
-    
-    a {
-      color: inherit;
-      text-decoration: none;
-      
-      &:hover {
-        text-decoration: underline;
-      }
-    }
-  }
+  letter-spacing: 1px;
+  text-shadow: 0 0 5px rgba(100, 255, 218, 0.3);
+  animation: ${hologramFlicker} 5s infinite;
   
   /* Terminal prefix */
   &::before {
     content: '> ';
-    color: #64ffda;
-    font-size: 18px;
+    color: ${props => props.accentColor || '#64ffda'};
+    font-size: 20px;
+  }
+`;
+
+const StyledSubtitle = styled.div`
+  font-family: 'VT323', 'Courier New', monospace;
+  font-size: 18px;
+  color: ${props => props.color || '#ccd6f6'};
+  margin: 5px 0 15px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  
+  a {
+    color: ${props => props.linkColor || '#64ffda'};
+    text-decoration: none;
+    
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+  
+  /* Institution/company icon */
+  &::before {
+    content: '${props => props.icon || '🏢'}';
+    margin-right: 10px;
   }
 `;
 
@@ -418,8 +505,33 @@ const StyledDutyList = styled.ul`
       content: '▹';
       position: absolute;
       left: 0;
-      color: #64ffda;
+      color: ${props => props.bulletColor || '#64ffda'};
     }
+  }
+`;
+
+const TagContainer = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 15px;
+  z-index: 2;
+`;
+
+const Tag = styled.span`
+  background: rgba(100, 255, 218, 0.1);
+  color: ${props => props.color || '#64ffda'};
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-family: 'VT323', 'Courier New', monospace;
+  border: 1px solid ${props => props.borderColor || 'rgba(100, 255, 218, 0.3)'};
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background: rgba(100, 255, 218, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
   }
 `;
 
@@ -429,15 +541,42 @@ const UserSignature = styled.div`
   margin-top: 20px;
   font-family: 'VT323', monospace;
   opacity: 0.8;
+  border-top: 1px dashed rgba(100, 255, 218, 0.3);
+  padding-top: 10px;
+`;
+
+const SectionIndicator = styled.div`
+  position: absolute;
+  left: 50%;
+  top: ${props => props.top || '0px'};
+  transform: translateX(-50%);
+  background: #0a192f;
+  border: 1px solid ${props => props.color || '#64ffda'};
+  color: ${props => props.color || '#64ffda'};
+  padding: 5px 15px;
+  border-radius: 20px;
+  font-family: 'VT323', 'Courier New', monospace;
+  font-size: 14px;
+  z-index: 10;
+  box-shadow: 0 0 10px rgba(${props => 
+    props.color === '#f7df1e' ? '247, 223, 30' : 
+    props.color === '#9d00ff' ? '157, 0, 255' : 
+    '100, 255, 218'}, 0.3);
+  
+  @media (max-width: 768px) {
+    left: 30px;
+    transform: translateX(-50%);
+  }
 `;
 
 // ============== Component ==============
 const Experience = () => {
   const { ref, controls } = useScrollReveal();
   const [stars, setStars] = useState([]);
+  const containerRef = useRef(null);
   
-  // Current date/time and username exactly as provided
-  const currentDateTime = "2025-07-07 05:44:05";
+  // Current date/time and username - exact values provided
+  const currentDateTime = "2025-07-08 08:08:36";
   const username = "itsanubhav009";
   
   // Generate random stars for the background
@@ -457,43 +596,62 @@ const Experience = () => {
     setStars(newStars);
   }, []);
 
-  const jobs = [
+  // Internship experience data
+  const internships = [
     {
-      company: 'Company One',
-      title: 'Software Engineer',
-      url: 'https://www.example.com',
-      range: 'January 2022 - Present',
-      duties: [
-        'Developed and maintained code for in-house and client websites primarily using HTML, CSS, JavaScript, React, and Node.js',
-        'Manually tested sites in various browsers and mobile devices to ensure cross-browser compatibility and responsiveness',
-        'Clients included Fortune 500 companies, small startups, and non-profits',
-        'Interfaced with clients on a weekly basis, providing technological expertise'
-      ]
+      title: "Web Developer Intern",
+      company: "Apex Planet",
+      range: "May 2025 - June 2025",
+      points: [
+        "Developed and maintained responsive web applications using modern frontend frameworks.",
+        "Collaborated with UI/UX designers to implement pixel-perfect interfaces and interactive elements.",
+        "Optimized application performance through code refactoring and best practices implementation."
+      ],
+      icon: "🌐",
+      color: "#9d00ff",
+      technologies: ["React", "TypeScript", "Tailwind CSS", "Next.js"]
     },
     {
-      company: 'Company Two',
-      title: 'Frontend Developer',
-      url: 'https://www.example.com',
-      range: 'July 2020 - December 2021',
-      duties: [
-        'Developed and shipped highly interactive web applications for Apple Music using Ember.js',
-        'Built and shipped the Apple Music Extension within Facebook Messenger leveraging third-party and internal APIs',
-        "Architected and implemented the front-end of Apple Music's embeddable web player widget, which lets users log in and listen to full songs in the browser",
-        'Contributed extensively to MusicKit.js, a JavaScript framework that allows developers to add an Apple Music player to their web apps'
-      ]
+      title: "Tech Intern",
+      company: "Zenqor (Stealth)",
+      range: "Feb 2025 - May 2025",
+      points: [
+        "Refactored 10+ API endpoints and optimized queries, improving response times under load.",
+        "Authored technical documentation for 5 core product features to enhance team onboarding."
+      ],
+      icon: "💻",
+      color: "#64ffda",
+      technologies: ["Node.js", "Express", "MongoDB", "Docker"]
     },
     {
-      company: 'Company Three',
-      title: 'Junior Developer',
-      url: 'https://www.example.com',
-      range: 'March 2019 - June 2020',
-      duties: [
-        'Worked with a team of three designers to build a marketing website and e-commerce platform for a retail client',
-        'Helped solidify a brand direction for blistabloc that spans both packaging and web',
-        'Interfaced with clients on a weekly basis, providing technological expertise'
-      ]
+      title: "Cybersecurity Intern",
+      company: "CDAC",
+      range: "July 2024 - Aug 2024",
+      points: [
+        "Developed 7 Python scripts to automate security audits, saving 5+ hours of manual work weekly.",
+        "Implemented 15+ data validation rules to harden defenses against common vulnerabilities."
+      ],
+      icon: "🔒",
+      color: "#f76dc4",
+      technologies: ["Python", "Linux", "Network Security", "Penetration Testing"]
     }
   ];
+
+  // Freelance project data
+  const freelanceProject = {
+    title: "Modern Business Website",
+    client: "Barter anD More",
+    range: "Feb 2025 - April 2025",
+    points: [
+      "Designed and developed a responsive corporate website with interactive features and custom animations.",
+      "Implemented a content management system allowing client to update site content without technical knowledge.",
+      "Integrated analytics dashboard to track user engagement and conversion metrics.",
+      "Optimized site performance achieving 98/100 PageSpeed score on mobile and desktop."
+    ],
+    icon: "🚀",
+    color: "#f7df1e",
+    technologies: ["React", "Next.js", "Framer Motion", "Sanity CMS", "Vercel", "Google Analytics"]
+  };
 
   return (
     <StyledExperienceSection id="experience">
@@ -517,25 +675,32 @@ const Experience = () => {
         animate={controls}
         variants={variants}
       >
-        Mission Log: Career Journey
+        Professional Experience
       </StyledSectionTitle>
 
       <StyledTimelineContainer
-        ref={ref}
+        ref={containerRef}
         initial="hidden"
         animate={controls}
         variants={variants}
       >
         <StyledTimeline>
-          {jobs.map((job, i) => (
-            <StyledTimelineNode key={i}>
+          {/* Internships Section */}
+          <SectionHeading color="#9d00ff">Internships</SectionHeading>
+          
+          {internships.map((item, i) => (
+            <StyledTimelineNode key={`intern-${i}`}>
               <StyledPlanetNode 
                 index={i}
-                aria-label={`${job.company} - ${job.title}`}
+                nodeColor={item.color}
+                aria-label={`${item.title} at ${item.company}`}
               />
               
-              <StyledTimelineDate className="timeline-date">
-                {job.range}
+              <StyledTimelineDate 
+                className="timeline-date"
+                dateColor={item.color}
+              >
+                {item.range}
               </StyledTimelineDate>
               
               <StyledTimelineContent 
@@ -543,26 +708,45 @@ const Experience = () => {
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.5, delay: i * 0.2 }}
+                borderColor={item.color}
+                borderColorAlt={i % 2 === 0 ? "#64ffda" : "#f76dc4"}
               >
-                <StyledCompanyTitle>
-                  <span className="title">{job.title}</span>
-                  <span className="company">
-                    &nbsp;@&nbsp;
-                    <a 
-                      href={job.url} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                    >
-                      {job.company}
-                    </a>
-                  </span>
-                </StyledCompanyTitle>
+                <StyledTitle 
+                  color="#e6f1ff"
+                  accentColor={item.color}
+                >
+                  {item.title}
+                </StyledTitle>
                 
-                <StyledDutyList>
-                  {job.duties.map((duty, j) => (
-                    <li key={j}>{duty}</li>
+                <StyledSubtitle 
+                  color="#ccd6f6"
+                  linkColor={item.color}
+                  icon={item.icon}
+                >
+                  {item.company}
+                </StyledSubtitle>
+                
+                <StyledDutyList bulletColor={item.color}>
+                  {item.points.map((point, j) => (
+                    <li key={j}>{point}</li>
                   ))}
                 </StyledDutyList>
+                
+                <TagContainer>
+                  {item.technologies.map((tech, k) => (
+                    <Tag 
+                      key={k} 
+                      color={item.color}
+                      borderColor={`rgba(${
+                        item.color === "#64ffda" ? "100, 255, 218" : 
+                        item.color === "#9d00ff" ? "157, 0, 255" : 
+                        "247, 109, 196"
+                      }, 0.3)`}
+                    >
+                      {tech}
+                    </Tag>
+                  ))}
+                </TagContainer>
                 
                 <UserSignature className="username-signature">
                   {username}@career-log ~ {currentDateTime}
@@ -570,6 +754,71 @@ const Experience = () => {
               </StyledTimelineContent>
             </StyledTimelineNode>
           ))}
+          
+          {/* Freelance Project Section with Dedicated Heading */}
+          <SectionHeading color="#f7df1e">Freelance Project</SectionHeading>
+          
+          <StyledTimelineNode key="freelance-project">
+            <StyledPlanetNode 
+              index={internships.length}
+              nodeColor={freelanceProject.color}
+              aria-label={`${freelanceProject.title} for ${freelanceProject.client}`}
+            />
+            
+            <StyledTimelineDate 
+              className="timeline-date"
+              dateColor={freelanceProject.color}
+            >
+              {freelanceProject.range}
+            </StyledTimelineDate>
+            
+            <StyledTimelineContent 
+              className="timeline-content"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5, delay: internships.length * 0.2 }}
+              borderColor={freelanceProject.color}
+              borderColorAlt="#9d00ff"
+              style={{ width: "calc(70% - 60px)" }}
+            >
+              <StyledTitle 
+                color="#e6f1ff"
+                accentColor={freelanceProject.color}
+              >
+                {freelanceProject.title}
+              </StyledTitle>
+              
+              <StyledSubtitle 
+                color="#ccd6f6"
+                linkColor={freelanceProject.color}
+                icon={freelanceProject.icon}
+              >
+                {freelanceProject.client}
+              </StyledSubtitle>
+              
+              <StyledDutyList bulletColor={freelanceProject.color}>
+                {freelanceProject.points.map((point, j) => (
+                  <li key={j}>{point}</li>
+                ))}
+              </StyledDutyList>
+              
+              <TagContainer>
+                {freelanceProject.technologies.map((tech, k) => (
+                  <Tag 
+                    key={k} 
+                    color={freelanceProject.color}
+                    borderColor="rgba(247, 223, 30, 0.3)"
+                  >
+                    {tech}
+                  </Tag>
+                ))}
+              </TagContainer>
+              
+              <UserSignature className="username-signature">
+                {username}@career-log ~ {currentDateTime}
+              </UserSignature>
+            </StyledTimelineContent>
+          </StyledTimelineNode>
         </StyledTimeline>
       </StyledTimelineContainer>
     </StyledExperienceSection>
